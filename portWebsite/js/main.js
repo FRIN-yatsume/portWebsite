@@ -137,17 +137,16 @@ function bindLandingScrollBack() {
 }
 
 // ------------------------------------------------------------------
-// 进入网页渲染：由 works 数据表填充 Main 区 + 3D/2D 缩略图网格
+// 进入网页渲染：由 works 数据表填充 Main 区 + 3D / MS / 2D 缩略图网格
 // —— 数据驱动：上新只改 works.js，此处按 category/order 自动摆放
 // ------------------------------------------------------------------
-const GRID_MIN_SLOTS = 3; // 可调整-尺寸：每类网格至少显示的橙框数（视觉基准一排三个）
 
 // 缩略图取值：优先 thumb 字段，缺省回退第一张编号图片
 function workThumbSrc(work) {
   return work.thumb || work.images?.[0] || "";
 }
 
-// 渲染单个分类网格（作品缩略图 + 不足基准格数时空橙框补齐）
+// 渲染单个分类网格（仅渲染数据中的真实作品，不补空框）
 function renderLandingGrid(category, gridEl) {
   if (!gridEl) return;
 
@@ -166,21 +165,16 @@ function renderLandingGrid(category, gridEl) {
     const img = document.createElement("img");
     img.src = workThumbSrc(work);
     img.alt = work.title;
+    img.addEventListener("load", refreshLandingShelfScroll, { once: true });
     btn.appendChild(img);
     gridEl.appendChild(btn);
   });
-
-  // 空位橙框（纯视觉占位，不可点；格数不写死，只补到视觉基准）
-  for (let i = list.length; i < GRID_MIN_SLOTS; i += 1) {
-    const empty = document.createElement("div");
-    empty.className = "landing-thumb is-empty";
-    gridEl.appendChild(empty);
-  }
 }
 
-// 渲染整个进入网页：两类网格 + Main 主推作品
+// 渲染整个进入网页：三类网格 + Main 主推作品
 function renderLanding() {
   renderLandingGrid("3D", document.querySelector(".landing-grid--3d"));
+  renderLandingGrid("MS", document.querySelector(".landing-grid--ms"));
   renderLandingGrid("2D", document.querySelector(".landing-grid--2d"));
 
   // Main 区 = 全站 order 最小的主推作品首图
@@ -190,6 +184,176 @@ function renderLanding() {
     mainImg.src = workThumbSrc(mainWork);
     mainImg.alt = mainWork.title;
   }
+
+  refreshLandingShelfScroll();
+}
+
+// ------------------------------------------------------------------
+// 作品棚拖拽滑块：按列表总高度比例计算滑块长度；不足滚动时灰色满轨
+// ------------------------------------------------------------------
+let landingShelfScrollY = 0;
+let landingShelfDrag = null;
+
+// 读取轨道内可用高度（扣除 padding）
+function getLandingShelfTrackInner() {
+  const track = document.querySelector(".landing-scrollbar");
+  if (!track) return { padTop: 0, innerH: 0 };
+
+  const trackStyle = getComputedStyle(track);
+  const padTop = parseFloat(trackStyle.paddingTop) || 0;
+  const padBottom = parseFloat(trackStyle.paddingBottom) || 0;
+  return {
+    padTop,
+    innerH: Math.max(track.clientHeight - padTop - padBottom, 0),
+  };
+}
+
+// 作品棚内容高度 vs 视口高度 → 是否可滚动、最大 scrollY
+function getLandingShelfScrollMetrics() {
+  const viewport = document.querySelector(".landing-shelf-viewport");
+  const content = document.querySelector(".landing-shelf-content");
+  if (!viewport || !content) {
+    return { contentH: 0, viewportH: 0, maxScroll: 0, canScroll: false };
+  }
+
+  const viewportH = viewport.clientHeight;
+  const contentH = content.offsetHeight;
+  const maxScroll = Math.max(0, contentH - viewportH);
+
+  return {
+    contentH,
+    viewportH,
+    maxScroll,
+    canScroll: maxScroll > 0,
+  };
+}
+
+function getLandingShelfScrollMax() {
+  return getLandingShelfScrollMetrics().maxScroll;
+}
+
+// 滑块高度 = 视口占比 × 轨道高度（内容越长滑块越短）
+function calcLandingShelfThumbHeight(viewportH, contentH, trackInnerH) {
+  if (contentH <= 0 || trackInnerH <= 0) return trackInnerH;
+
+  const track = document.querySelector(".landing-scrollbar");
+  const minPx = parseFloat(getComputedStyle(track || document.documentElement).getPropertyValue("--landing-scrollbar-thumb-min")) || 12;
+  const ratio = Math.min(viewportH / contentH, 1);
+  return Math.min(trackInnerH, Math.max(ratio * trackInnerH, minPx));
+}
+
+// 同步滑块尺寸与位置、棚区 translateY
+function refreshLandingShelfScroll() {
+  const viewport = document.querySelector(".landing-shelf-viewport");
+  const content = document.querySelector(".landing-shelf-content");
+  const track = document.querySelector(".landing-scrollbar");
+  const thumb = document.querySelector(".scrollbar-thumb");
+  if (!viewport || !content || !track || !thumb) return;
+
+  const { contentH, viewportH, maxScroll, canScroll } = getLandingShelfScrollMetrics();
+  const { padTop, innerH: trackInnerH } = getLandingShelfTrackInner();
+
+  landingShelfScrollY = Math.min(landingShelfScrollY, maxScroll);
+
+  if (!canScroll) {
+    track.classList.add("is-idle");
+    landingShelfScrollY = 0;
+    content.style.transform = "";
+    thumb.style.height = `${trackInnerH}px`;
+    thumb.style.top = `${padTop}px`;
+    return;
+  }
+
+  track.classList.remove("is-idle");
+
+  const thumbH = calcLandingShelfThumbHeight(viewportH, contentH, trackInnerH);
+  const maxThumbTop = Math.max(trackInnerH - thumbH, 0);
+  const thumbTop = (landingShelfScrollY / maxScroll) * maxThumbTop;
+
+  thumb.style.height = `${thumbH}px`;
+  thumb.style.top = `${padTop + thumbTop}px`;
+  content.style.transform = `translateY(-${landingShelfScrollY}px)`;
+}
+
+function setLandingShelfScroll(y) {
+  landingShelfScrollY = Math.max(0, Math.min(y, getLandingShelfScrollMax()));
+  refreshLandingShelfScroll();
+}
+
+function bindLandingShelfScroll() {
+  const viewport = document.querySelector(".landing-shelf-viewport");
+  const track = document.querySelector(".landing-scrollbar");
+  const thumb = document.querySelector(".scrollbar-thumb");
+  if (!viewport || !track || !thumb) return;
+
+  // —— 滑块拖拽 ——
+  thumb.addEventListener("pointerdown", (e) => {
+    if (track.classList.contains("is-idle")) return;
+    e.preventDefault();
+    landingShelfDrag = {
+      startY: e.clientY,
+      startScroll: landingShelfScrollY,
+      trackInnerH:
+        track.clientHeight -
+        (parseFloat(getComputedStyle(track).paddingTop) || 0) -
+        (parseFloat(getComputedStyle(track).paddingBottom) || 0),
+      thumbH: thumb.offsetHeight,
+    };
+    thumb.setPointerCapture(e.pointerId);
+  });
+
+  thumb.addEventListener("pointermove", (e) => {
+    if (!landingShelfDrag) return;
+    const maxScroll = getLandingShelfScrollMax();
+    const maxThumbTop = landingShelfDrag.trackInnerH - landingShelfDrag.thumbH;
+    if (maxThumbTop <= 0 || maxScroll <= 0) return;
+    const dy = e.clientY - landingShelfDrag.startY;
+    const scrollDelta = (dy / maxThumbTop) * maxScroll;
+    setLandingShelfScroll(landingShelfDrag.startScroll + scrollDelta);
+  });
+
+  const endDrag = (e) => {
+    if (!landingShelfDrag) return;
+    landingShelfDrag = null;
+    try {
+      thumb.releasePointerCapture(e.pointerId);
+    } catch {
+      /* 已释放则忽略 */
+    }
+  };
+  thumb.addEventListener("pointerup", endDrag);
+  thumb.addEventListener("pointercancel", endDrag);
+
+  // —— 棚区滚轮滚动（landing 激活时；顶栏向上滚仍留给返回首页）——
+  viewport.addEventListener(
+    "wheel",
+    (e) => {
+      if (!document.getElementById("landing")?.classList.contains("is-active")) return;
+      if (track.classList.contains("is-idle")) return;
+
+      const maxScroll = getLandingShelfScrollMax();
+      const next = landingShelfScrollY + e.deltaY;
+
+      // 已在顶部且继续上滑 → 不拦截，交给返回首页的滚轮逻辑
+      if (next <= 0 && e.deltaY < 0) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      setLandingShelfScroll(next);
+    },
+    { passive: false }
+  );
+
+  window.addEventListener("resize", refreshLandingShelfScroll);
+
+  // 作品列表高度变化时重算滑块比例（上新 / 缩略图加载 / 窗口变化）
+  const content = document.querySelector(".landing-shelf-content");
+  if (content && typeof ResizeObserver !== "undefined") {
+    const observer = new ResizeObserver(() => refreshLandingShelfScroll());
+    observer.observe(content);
+  }
+
+  refreshLandingShelfScroll();
 }
 
 // ------------------------------------------------------------------
@@ -235,6 +399,7 @@ function init() {
   startHomeSelfie();
   renderLanding();
   startLandingAvatar();
+  bindLandingShelfScroll();
   // TODO: 装配常驻播放器
 }
 

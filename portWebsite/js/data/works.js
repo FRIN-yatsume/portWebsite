@@ -10,7 +10,7 @@
  * @typedef {Object} Work
  * @property {string}   id            唯一 ID（过渡动画用它定位网格槽位）
  * @property {string}   projectName   项目名（驼峰截断），用于拼素材文件名
- * @property {"3D"|"2D"} category     决定进哪个网格区
+ * @property {"3D"|"MS"|"2D"} category  决定进哪个网格区（MS = マテリアル＆シェーダー）
  * @property {number}   order         我安排的顺序（全站一条线），底部「下一个」按此递增
  * @property {string}   title         作品页左上标题
  * @property {string}   [thumb]       缩略图（默认取 Image_(项目名)1.png，可覆盖）
@@ -29,7 +29,7 @@ export const works = [
   {
     id: "work_sample",              // 唯一 ID（可调整-文字）
     projectName: "Sample",          // 项目名（可调整-文字）
-    category: "3D",                 // 可调整-文字："3D" | "2D"
+    category: "3D",                 // 可调整-文字："3D" | "MS" | "2D"
     order: 1,                       // 可调整-位置：全站展示顺序（下一个按此递增）
     title: "· (作品名)",             // 可调整-文字：作品页左上标题
     images: [

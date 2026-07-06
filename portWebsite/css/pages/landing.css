@@ -9,10 +9,10 @@
 /* 进入网页集中调参区：所有元素位置尺寸都从这里调                        */
 /* ------------------------------------------------------------------ */
 #landing {
-  /* 可调整-位置 / 可调整-尺寸：向上箭头（对话框右侧空档，避免重叠） */
+  /* 可调整-位置 / 可调整-尺寸：向上箭头（页面水平居中） */
   --landing-arrow-size: 4cqw;
-  --landing-arrow-left: 88cqw;
-  --landing-arrow-top: 2.5cqh;
+  --landing-arrow-left: 50cqw;
+  --landing-arrow-top: 0cqh;
 
   /* 可调整-位置 / 可调整-尺寸：左上店主头像（过渡 A 头像飞入的落位锚点） */
   --landing-avatar-left: 3cqw;
@@ -29,44 +29,40 @@
   /* 可调整-位置 / 可调整-尺寸：主白框面板 */
   --landing-panel-left: 3.4cqw;
   --landing-panel-top: 26cqh;
-  --landing-panel-width: 90.8cqw;
-  --landing-panel-height: 68.5cqh;
+  --landing-panel-width: 95.5cqw;
+  --landing-panel-height: 71cqh;
 
   /* 可调整-位置 / 可调整-尺寸：Main 主推作品大展示位 */
-  --landing-main-left: 5.7cqw;
-  --landing-main-top: 30cqh;
-  --landing-main-width: 33cqw;
-  --landing-main-height: 46cqh;
+  --landing-main-left: 5.5cqw;
+  --landing-main-top: 29.5cqh;
+  --landing-main-width: 43cqw;
+  --landing-main-height: 54cqh;
 
   /* 可调整-位置 / 可调整-尺寸：绿色手写 Main（压在展示位右下缘） */
-  --landing-main-script-left: 21cqw;
-  --landing-main-script-top: 64cqh;
+  --landing-main-script-left: 41cqw;
+  --landing-main-script-top: 79cqh;
   --landing-main-script-size: 10cqh;
 
-  /* 可调整-位置 / 可调整-尺寸：3D / 2D 分类标签（右对齐） */
-  --landing-cat-label-right: 7.7cqw;
-  --landing-cat-label-3d-top: 28.5cqh;
-  --landing-cat-label-2d-top: 60.5cqh;
+  /* 可调整-位置 / 可调整-尺寸：作品棚（3D / マテリアル＆シェーダー / 2D 标签 + 缩略图，统一右对齐） */
+  --landing-scrollbar-right: 4.5cqw;    /* 可调整-位置：滑块轨道距舞台右缘 */
+  --landing-scrollbar-width: 1.5cqw;
+  --landing-shelf-gap: 1.2cqw;          /* 可调整-尺寸：棚区与滑块间距 */
+  --landing-shelf-right: calc(var(--landing-scrollbar-right) + var(--landing-scrollbar-width) + var(--landing-shelf-gap));
+  --landing-shelf-top: 28.5cqh;
+  --landing-shelf-height: 68cqh;      /* 与滑块轨道同高 */
+  --landing-grid-width: 36cqw;
+  --landing-shelf-section-gap: 6cqh;    /* 可调整-尺寸：各分类区间距 */
+  --landing-shelf-label-gap: 1.5cqh;    /* 可调整-尺寸：标签与缩略图行间距 */
+  --landing-grid-gap: 1.6cqw;
+  --landing-thumb-height: 16.5cqh;
   --landing-cat-label-size: 4.5cqh;
 
-  /* 可调整-位置 / 可调整-尺寸：缩略图网格（3D 上排 / 2D 下排） */
-  --landing-grid-left: 49.8cqw;
-  --landing-grid-width: 39.3cqw;
-  --landing-grid-3d-top: 38.7cqh;
-  --landing-grid-2d-top: 70.3cqh;
-  --landing-grid-gap: 1.6cqw;           /* 可调整-尺寸：缩略图间距 */
-  --landing-thumb-height: 16.5cqh;      /* 可调整-尺寸：缩略图行高 */
-
-  /* 可调整-位置 / 可调整-尺寸：右缘白色滚动条 */
-  --landing-scrollbar-left: 94.7cqw;
-  --landing-scrollbar-top: 28.5cqh;
-  --landing-scrollbar-width: 1.5cqw;
-  --landing-scrollbar-height: 63.5cqh;
-
-  /* 可调整-位置 / 可调整-尺寸：左下 L 形白线框（音乐播放器彩蛋落位） */
-  --landing-player-left: 3.4cqw;
-  --landing-player-top: 86.5cqh;
-  --landing-player-width: 20.6cqw;
+  /* 可调整-尺寸：滑块内边距（thumb 在轨道内滑动） */
+  --landing-scrollbar-pad-y: 0.3cqh;
+  --landing-scrollbar-pad-x: 0.15cqw;
+  --landing-scrollbar-thumb-min: 12px;    /* 可调整-尺寸：可滚动时滑块最小高度（仅保证可拖） */
+  --landing-scrollbar-thumb-idle: rgba(255, 255, 255, 0.35); /* 可调整-颜色：不可滚动时灰色滑块 */
+  --landing-scrollbar-track-idle: rgba(255, 255, 255, 0.45); /* 可调整-颜色：不可滚动时轨道线框 */
 }
 
 /* ------------------------------------------------------------------ */
@@ -209,67 +205,78 @@
   object-fit: cover;                      /* 可调整-尺寸：主推图填充方式（cover/contain） */
 }
 
-/* 绿色手写 Main（压在展示位下缘，花体占位字体） */
+/* 绿色 Main 字（Georgia Italic，压在展示位下缘） */
 .landing-main-script {
   position: absolute;
   left: var(--landing-main-script-left);  /* 可调整-位置：Main 字水平位置 */
   top: var(--landing-main-script-top);    /* 可调整-位置：Main 字垂直位置 */
   z-index: 3;
-  font-family: var(--font-script);        /* 可调整-文字：手写花体（占位，最终字体待定） */
+  font-family: var(--font-serif);         /* 可调整-文字：Georgia Italic */
   font-style: italic;
   font-size: var(--landing-main-script-size); /* 可调整-尺寸：Main 字号 */
-  color: var(--color-green-script);       /* 可调整-颜色：Main 手写绿（待用户确认） */
+  color: var(--color-green-script);       /* 可调整-颜色：Main 绿字 */
   pointer-events: none;
   user-select: none;
 }
 
 /* ------------------------------------------------------------------ */
-/* 右：3D(ほか) / 2D(ほか) 分类标签（橙色手写风）                       */
+/* 右：作品棚视口（标签 + 缩略图统一右对齐，超出时纵向滚动）            */
 /* ------------------------------------------------------------------ */
-.landing-cat-label {
+.landing-shelf-viewport {
   position: absolute;
-  right: var(--landing-cat-label-right);  /* 可调整-位置：标签右对齐位置 */
+  top: var(--landing-shelf-top);          /* 可调整-位置：棚区顶部 */
+  right: var(--landing-shelf-right);      /* 可调整-位置：棚区右缘（与滑块对齐） */
+  width: var(--landing-grid-width);       /* 可调整-尺寸：棚区宽 */
+  height: var(--landing-shelf-height);    /* 可调整-尺寸：棚区可视高度 */
   z-index: 2;
-  font-family: var(--font-script);        /* 可调整-文字：标签字体（手写风占位） */
-  font-size: var(--landing-cat-label-size); /* 可调整-尺寸：标签字号 */
-  color: var(--color-orange);             /* 可调整-颜色：标签橙色 */
+  overflow: hidden;                       /* 裁切超出部分，由滑块控制滚动 */
+}
+
+.landing-shelf-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;                  /* 标签与网格右对齐 */
+  gap: var(--landing-shelf-section-gap);
+  will-change: transform;
+}
+
+.landing-shelf-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;                  /* 分类内：标签与网格右对齐 */
+  gap: var(--landing-shelf-label-gap);
+  width: 100%;
+}
+
+/* 3D(ほか) / マテリアル＆シェーダー / 2D(ほか) 分类标签（Yu Gothic，右对齐） */
+.landing-cat-label {
+  width: 100%;
+  text-align: right;                      /* 可调整-位置：标签文字右对齐 */
+  font-family: var(--font-gothic);
+  font-weight: 700;
+  font-size: var(--landing-cat-label-size);
+  color: var(--color-orange);
   pointer-events: none;
   user-select: none;
 }
 
-.landing-cat-label--3d {
-  top: var(--landing-cat-label-3d-top);   /* 可调整-位置：3D 标签垂直位置 */
-}
-
-.landing-cat-label--2d {
-  top: var(--landing-cat-label-2d-top);   /* 可调整-位置：2D 标签垂直位置 */
-}
-
 /* ------------------------------------------------------------------ */
-/* 右：缩略图网格（每排三列为视觉基准，可多排自动换行，格数不写死）      */
+/* 缩略图网格（每行最多 3 列；作品从架子最右侧开始摆，向左增长）       */
 /* ------------------------------------------------------------------ */
 .landing-grid {
-  position: absolute;
-  left: var(--landing-grid-left);         /* 可调整-位置：网格水平位置 */
-  width: var(--landing-grid-width);       /* 可调整-尺寸：网格总宽 */
-  z-index: 2;
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);  /* 可调整-尺寸：每排列数（视觉基准 3） */
+  grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: var(--landing-thumb-height);
   gap: var(--landing-grid-gap);
+  direction: rtl;
 }
 
-.landing-grid--3d {
-  top: var(--landing-grid-3d-top);        /* 可调整-位置：3D 网格垂直位置 */
-}
-
-.landing-grid--2d {
-  top: var(--landing-grid-2d-top);        /* 可调整-位置：2D 网格垂直位置 */
-}
-
-/* 单个缩略图：橙框（有作品可点进作品页，空位仅占位） */
+/* 单个缩略图：橙框（有作品可点进作品页） */
 .landing-thumb {
-  border: 2px solid var(--color-orange);  /* 可调整-尺寸/颜色：缩略图橙框 */
+  direction: ltr;
+  aspect-ratio: 1;                        /* 可调整-尺寸：缩略图保持方框 */
+  border: 2px solid var(--color-orange);
   background: transparent;
   padding: 0;
   cursor: pointer;
@@ -277,57 +284,57 @@
 }
 
 .landing-thumb:hover {
-  background: rgba(246, 161, 75, 0.15);   /* 可调整-颜色：缩略图悬停高亮 */
+  background: rgba(246, 161, 75, 0.15);
 }
 
 .landing-thumb img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;                      /* 可调整-尺寸：缩略图填充方式 */
-}
-
-/* 空位橙框：不可点、无悬停 */
-.landing-thumb.is-empty {
-  cursor: default;
-}
-
-.landing-thumb.is-empty:hover {
-  background: transparent;
+  object-fit: cover;
 }
 
 /* ------------------------------------------------------------------ */
-/* 右缘：白色滚动条（视觉占位，后续接真实滚动逻辑）                      */
+/* 右缘：拖拽滑块（圆角轨道 + 白色滑块，拖动滚动作品棚）               */
 /* ------------------------------------------------------------------ */
 .landing-scrollbar {
   position: absolute;
-  left: var(--landing-scrollbar-left);    /* 可调整-位置：滚动条水平位置 */
-  top: var(--landing-scrollbar-top);      /* 可调整-位置：滚动条垂直位置 */
-  width: var(--landing-scrollbar-width);  /* 可调整-尺寸：滚动条宽 */
-  height: var(--landing-scrollbar-height);/* 可调整-尺寸：滚动条高 */
-  z-index: 2;
-  border: 1px solid var(--color-white);   /* 可调整-尺寸/颜色：滚动条轨道线框 */
+  right: var(--landing-scrollbar-right);  /* 可调整-位置：滑块轨道水平位置 */
+  top: var(--landing-shelf-top);
+  width: var(--landing-scrollbar-width);
+  height: var(--landing-shelf-height);
+  z-index: 3;
+  box-sizing: border-box;
+  border: 1px solid var(--color-white);
   border-radius: 999px;
-  padding: 0.3cqh 0.15cqw;                /* 可调整-尺寸：轨道与滑块间隙 */
+  padding: var(--landing-scrollbar-pad-y) var(--landing-scrollbar-pad-x);
 }
 
 .landing-scrollbar .scrollbar-thumb {
-  width: 100%;
-  height: 30%;                            /* 可调整-尺寸：滑块长度 */
-  background: var(--color-white);         /* 可调整-颜色：滑块颜色 */
+  position: absolute;
+  left: var(--landing-scrollbar-pad-x);
+  right: var(--landing-scrollbar-pad-x);
+  top: var(--landing-scrollbar-pad-y);
+  border: none;
+  padding: 0;
+  background: var(--color-white);         /* 可调整-颜色：可滚动时白色滑块 */
   border-radius: 999px;
+  cursor: grab;
+  touch-action: none;
+  transition: background 0.2s ease;       /* 可调整-速度：灰/白状态切换 */
 }
 
-/* ------------------------------------------------------------------ */
-/* 左下：白色 L 形层叠线框（音乐播放器彩蛋落位，下缘延伸出舞台底部）     */
-/* ------------------------------------------------------------------ */
-.landing-player-frame {
-  position: absolute;
-  left: var(--landing-player-left);       /* 可调整-位置：播放器框水平位置 */
-  top: var(--landing-player-top);         /* 可调整-位置：播放器框垂直位置 */
-  width: var(--landing-player-width);     /* 可调整-尺寸：播放器框宽 */
-  bottom: 0;                              /* 下缘贴舞台底（参考图中延伸出画面） */
-  z-index: 2;
-  border: 1px solid var(--color-white);   /* 可调整-尺寸/颜色：播放器白线框 */
-  border-bottom: none;                    /* 底边开口：模拟延伸出画面的裁切感 */
+.landing-scrollbar .scrollbar-thumb:active {
+  cursor: grabbing;
+}
+
+/* 内容高度不足、无法下拉：满轨灰色滑块，不可拖 */
+.landing-scrollbar.is-idle {
+  border-color: var(--landing-scrollbar-track-idle);
+}
+
+.landing-scrollbar.is-idle .scrollbar-thumb {
+  background: var(--landing-scrollbar-thumb-idle);
+  pointer-events: none;
+  cursor: default;
 }

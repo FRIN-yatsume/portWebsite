@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/shared/background.css" />
   <link rel="stylesheet" href="css/shared/fonts.css" />
   <link rel="stylesheet" href="css/shared/components.css" />
+  <link rel="stylesheet" href="css/shared/player.css" />
   <link rel="stylesheet" href="css/pages/home.css" />
   <link rel="stylesheet" href="css/pages/landing.css" />
   <link rel="stylesheet" href="css/pages/work.css" />
@@ -87,9 +88,12 @@
       <!-- 左上：店主头像（缩小爆炸贴纸；过渡 A 中由首页自拍飞入落位；src 由 JS 帧序列循环替换） -->
       <img class="landing-avatar" src="asset/shared/sticker/selfie/1.png" alt="店主头像" />
 
-      <!-- 头像旁：RPG 绿色对话框（容器壳；台词文案待用户提供先留空，打字机由 dialog.js 后续接管） -->
+      <!-- 头像旁：RPG 绿色对话框（打字机由 dialog.js 后续接管；现阶段静态展示完整台词） -->
       <div class="landing-dialog">
-        <p class="dialog-text"><!-- 可调整-文字：RPG 台词（待补，先留空） --></p>
+        <p class="dialog-text">
+          いらっしゃいませ！ご来店ありがとうございます。<br />
+          私のポートフォリオです。
+        </p>
         <span class="dialog-next" aria-hidden="true">&#x25BD;</span>
       </div>
 
@@ -100,22 +104,31 @@
       <button class="landing-main" type="button" data-goto="work">
         <img class="landing-main-img" src="asset/works/Sample/Image_Sample1.png" alt="主推作品" />
       </button>
-      <!-- 绿色手写 Main（压在展示位下缘） -->
+      <!-- 绿色 Main 字（Georgia Italic，压在展示位下缘） -->
       <div class="landing-main-script" aria-hidden="true">Main</div> <!-- 可调整-文字 -->
 
-      <!-- 右上：3D(ほか) 缩略图网格（缩略图由 JS 按 works 数据渲染） -->
-      <div class="landing-cat-label landing-cat-label--3d">3D(ほか)</div> <!-- 可调整-文字 -->
-      <div class="landing-grid landing-grid--3d"></div>
+      <!-- 右：作品棚（3D / マテリアル＆シェーダー / 2D 标签 + 缩略图，右对齐；超出视口可滚动） -->
+      <div class="landing-shelf-viewport">
+        <div class="landing-shelf-content">
+          <div class="landing-shelf-section">
+            <div class="landing-cat-label">3D(ほか)</div> <!-- 可调整-文字 -->
+            <div class="landing-grid landing-grid--3d"></div>
+          </div>
+          <div class="landing-shelf-section">
+            <div class="landing-cat-label">マテリアル＆シェーダー</div> <!-- 可调整-文字 -->
+            <div class="landing-grid landing-grid--ms"></div>
+          </div>
+          <div class="landing-shelf-section">
+            <div class="landing-cat-label">2D (ほか)</div> <!-- 可调整-文字 -->
+            <div class="landing-grid landing-grid--2d"></div>
+          </div>
+        </div>
+      </div>
 
-      <!-- 右下：2D(ほか) 缩略图网格（缩略图由 JS 按 works 数据渲染） -->
-      <div class="landing-cat-label landing-cat-label--2d">2D (ほか)</div> <!-- 可调整-文字 -->
-      <div class="landing-grid landing-grid--2d"></div>
-
-      <!-- 右缘：白色滚动条（视觉占位，后续接真实滚动） -->
-      <div class="landing-scrollbar" aria-hidden="true"><div class="scrollbar-thumb"></div></div>
-
-      <!-- 左下：白色 L 形层叠线框（音乐播放器彩蛋占位） -->
-      <div class="landing-player-frame" aria-hidden="true"></div>
+      <!-- 右缘：拖拽滑块（滚动作品棚） -->
+      <div class="landing-scrollbar" aria-label="作品棚滚动">
+        <button class="scrollbar-thumb" type="button" aria-label="拖动浏览作品棚"></button>
+      </div>
     </div>
   </section>
 
@@ -128,9 +141,31 @@
     </div>
   </section>
 
-  <!-- ================= 常驻音乐播放器（左下角线框彩蛋，跨 section 不卸载）================= -->
-  <div id="player">
-    <!-- TODO: L 形层叠线框入口 + 常驻 <audio> -->
+  <!-- ================= 常驻音乐播放器（左下角 L 形线框，跨 section 不卸载）================= -->
+  <div id="player" class="is-hidden">
+    <div class="player-stage-mirror">
+      <div class="player-shell">
+        <audio class="player-audio" preload="metadata"></audio>
+        <div class="player-controls">
+          <div class="player-row player-row--main">
+            <div class="player-transport">
+              <button type="button" class="player-btn player-btn--prev" aria-label="上一首" disabled>&#x23EE;</button>
+              <button type="button" class="player-btn player-btn--play" aria-label="播放" disabled>&#x25B6;</button>
+              <button type="button" class="player-btn player-btn--next" aria-label="下一首" disabled>&#x23ED;</button>
+            </div>
+            <button type="button" class="player-btn player-btn--mode is-active" aria-label="列表循环" disabled>LOOP</button>
+          </div>
+          <div class="player-row player-row--progress">
+            <button type="button" class="player-btn player-btn--volume" aria-label="音量" aria-expanded="false" disabled>&#x1F50A;</button>
+            <input type="range" class="player-progress" min="0" max="1000" value="0" aria-label="播放进度" disabled />
+          </div>
+          <div class="player-volume-panel" hidden>
+            <input type="range" class="player-volume" min="0" max="100" value="80" aria-label="音量" disabled />
+          </div>
+          <p class="player-track-title">NO TRACK</p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ================= SPA 入口脚本 ================= -->
