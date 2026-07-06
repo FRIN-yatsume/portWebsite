@@ -69,12 +69,11 @@
   --home-new-top: 70vh;
   --home-new-font-size: clamp(44px, 8vw, 118px);
 
-  /* 可调整-位置 / 可调整-尺寸：向下箭头（锚定右下信息卡正下方） */
+  /* 可调整-位置 / 可调整-尺寸：向下箭头（页面水平居中，垂直靠近右下信息卡下方） */
   --home-arrow-size: clamp(36px, 4vw, 84px);
-  /* 水平：信息卡中线（想左右挪就在末尾加减 vw，如 ... - 5vw） */
-  --home-arrow-left: calc(100vw - var(--home-info-right) - var(--home-info-width) / 2);
+  --home-arrow-left: 50vw;
   /* 垂直：信息卡下缘再往下 0.5vh（调 0.5vh 控制与卡片的间隙） */
-  --home-arrow-bottom: calc(var(--home-info-bottom) - var(--home-arrow-size) - 0.5vh);
+  --home-arrow-bottom: calc(var(--home-info-bottom) - var(--home-arrow-size) + 3vh);
 
   overflow: hidden;              /* 全屏边框贴视口四边，超出视口的部分裁掉 */
 }
@@ -352,7 +351,7 @@
   line-height: 1;
   cursor: pointer;
   /* 可调整-速度：箭头跳动周期（1.2s） */
-  animation: home-arrow-bob 1.2s ease-in-out infinite;
+  animation: home-arrow-bob 1.5s ease-in-out infinite;
 }
 
 .home-arrow:hover {
@@ -362,5 +361,91 @@
 /* 箭头上下轻微跳动，提示可点 */
 @keyframes home-arrow-bob {
   0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(0.8vh); } /* 可调整-尺寸：跳动幅度 */
+  50% { transform: translateX(-50%) translateY(2vh); } /* 可调整-尺寸：跳动幅度 */
+}
+
+/* ==========================================================================
+   过渡 A 离场动画（首页 → 进入网页）—— JS 挂 #home.is-leaving 触发
+   —— 除头像外全部元素：一边 fade out 一边向上滑动消失
+   —— 白色手绘边框：不上滑，放大 + fade out（镜头向中间聚焦推进）
+   —— 头像：由 transition.js 用 FLIP 直线飞到 landing 左上落位（帧序列不停）
+   —— 倒放（返回）：移除 .is-leaving 即反向 transition 回原位
+   —— 检索标签：可调整-速度 / 可调整-尺寸
+   ========================================================================== */
+#home {
+  /* 可调整-尺寸：离场上滑距离 */
+  --home-leave-rise: 12vh;
+  /* 可调整-尺寸：边框离场放大倍数（镜头聚焦感，越大推进越猛） */
+  --home-frame-zoom: 1.6;
+}
+
+/* 参与过渡的元素：倒放淡入用较慢时长 + 缓出曲线（丝滑落位） */
+.home-shop,
+.home-tagline,
+.home-info,
+.home-new,
+.home-arrow,
+.home-frame {
+  transition:
+    transform var(--transition-a-in-dur, 0.9s) cubic-bezier(0, 0, 0.2, 1),
+    opacity var(--transition-a-in-dur, 0.9s) cubic-bezier(0, 0, 0.2, 1);
+}
+
+/* 正放淡出：较快退场 + 缓入曲线（先快后收） */
+#home.is-leaving .home-shop,
+#home.is-leaving .home-tagline,
+#home.is-leaving .home-info,
+#home.is-leaving .home-new,
+#home.is-leaving .home-arrow,
+#home.is-leaving .home-frame {
+  transition:
+    transform var(--transition-a-out-dur, 0.55s) cubic-bezier(0.4, 0, 1, 1),
+    opacity var(--transition-a-out-dur, 0.55s) cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* 除头像外的内容元素：上滑 + 淡出 */
+#home.is-leaving .home-shop,
+#home.is-leaving .home-tagline,
+#home.is-leaving .home-info,
+#home.is-leaving .home-new {
+  transform: translateY(calc(-1 * var(--home-leave-rise)));
+  opacity: 0;
+}
+
+/* 箭头：保留自身水平居中 transform，叠加上滑；离场时停掉跳动动画 */
+#home.is-leaving .home-arrow {
+  animation: none;
+  transform: translateX(-50%) translateY(calc(-1 * var(--home-leave-rise)));
+  opacity: 0;
+}
+
+/* 白色手绘边框：原地放大溢出 + 淡出（镜头聚焦到中间） */
+#home.is-leaving .home-frame {
+  transform: scale(var(--home-frame-zoom));
+  opacity: 0;
+}
+
+/* 头像飞行态：JS 设置 transform；时长跟随淡入（与 landing 渐显同步） */
+.home-selfie.is-flying {
+  transition: transform var(--transition-a-in-dur, 0.9s) cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: 0 0;          /* FLIP 换算以左上角为基准 */
+  will-change: transform;
+  z-index: 5;                     /* 飞行时压过装饰边框 */
+}
+
+/* 过渡后隐藏首页自拍（landing 落位头像顶替显示） */
+.home-selfie.is-hidden {
+  opacity: 0;
+}
+
+/* 瞬时切换态：倒放前需要先无动画地摆好离场姿势 / 显隐，JS 临时挂载 */
+#home.is-snapping,
+#home.is-snapping .home-shop,
+#home.is-snapping .home-tagline,
+#home.is-snapping .home-info,
+#home.is-snapping .home-new,
+#home.is-snapping .home-arrow,
+#home.is-snapping .home-frame,
+#home.is-snapping .home-selfie {
+  transition: none;
 }
