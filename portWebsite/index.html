@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 可调整-文字：浏览器标签页标题 -->
+  <title>Shop sells (almost) everything —— 曹安安 作品集</title>
+
+  <!-- ================= 全站样式：变量 → 基础层 → 共享 → 各子页面 ================= -->
+  <link rel="stylesheet" href="css/shared/variables.css" />
+  <link rel="stylesheet" href="css/shared/base.css" />
+  <link rel="stylesheet" href="css/shared/background.css" />
+  <link rel="stylesheet" href="css/shared/fonts.css" />
+  <link rel="stylesheet" href="css/shared/components.css" />
+  <link rel="stylesheet" href="css/pages/home.css" />
+  <link rel="stylesheet" href="css/pages/landing.css" />
+  <link rel="stylesheet" href="css/pages/work.css" />
+</head>
+<body>
+  <!-- ================= 常驻背景层（最底层固定，永不参与动画）================= -->
+  <div class="bg-layer"></div>
+  <div class="bg-blobs"></div>
+
+  <!-- ================= 子页面 1：首页 Homepage（初始激活）================= -->
+  <section id="home" class="section is-active">
+    <!-- 装饰边框：全屏 border-image 九宫格 9-slice（可调整-素材/切线见 home.css） -->
+    <div class="home-frame" aria-hidden="true"></div>
+
+    <!-- 手写 Shop（所有文字最下层，可调整-素材：换 SHOP.png） -->
+    <img class="home-shop" src="asset/pages/home/SHOP.png" alt="Shop" />
+
+    <!-- 左侧：红色爆炸贴纸自拍（可调整-素材：selfie 帧；src 由 JS 循环替换） -->
+    <img class="home-selfie" src="asset/shared/sticker/selfie/1.png" alt="曹安安 自拍" />
+
+    <!-- 右上：sells (almost) everything（可调整-文字：标语内容） -->
+    <div class="home-tagline">
+      <span class="t-sells">sells</span>
+      <span class="t-everything"><span class="t-almost">(almost)</span> everything</span>
+    </div>
+
+    <!-- 右下：绿色信息块（可调整-文字：以下全部文案） -->
+    <div class="home-info">
+      <!-- 左列：姓名 + 时间线 -->
+      <div class="info-col">
+        <div class="info-name-row">
+          <div class="info-name">
+            <div class="name-cn">曹　安安</div>              <!-- 可调整-文字：中文名 -->
+            <div class="name-kana">ソウ　アンアン</div>       <!-- 可调整-文字：假名 -->
+          </div>
+          <div class="info-role">CGデザイナー<br>志望</div>
+        </div>
+        <ul class="info-timeline">
+          <!-- 可调整-文字：经历时间线 -->
+          <li><span class="timeline-year">1998年12月</span><span class="timeline-desc">中国広東省　生まれ</span></li>
+          <li><span class="timeline-year">2021</span><span class="timeline-desc">(台湾)世新大学卒業</span></li>
+          <li><span class="timeline-year">2026</span><span class="timeline-desc">（日本）立命館大学大学院<br>映像研究科  卒業予定</span></li>
+        </ul>
+      </div>
+
+      <!-- 右列：学習意欲 / チームワーク / なんでも屋（整列线框包裹） -->
+      <div class="info-col info-col--right">
+        <div class="info-panel">
+          <div class="info-heading">・学習意欲</div>
+          <div class="info-sub">  2d / 3d / music / web / vibe coding(ai利用)</div>
+          <div class="info-heading">・チームワーク</div>
+          <div class="info-sub">  indie / jam / school</div>
+          <div class="info-push-point">推しポイント</div>
+          <div class="info-note">「なんでも屋」と言われています</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW!!（可调整-文字：文案；后续可接帧动画） -->
+    <div class="home-new">NEW!!</div>
+
+    <!-- 向下箭头：进入「进入网页」的入口触发（data-goto 指定目标 section） -->
+    <button class="home-arrow" type="button" data-goto="landing" aria-label="进入网页">&#x2193;</button>
+  </section>
+
+  <!-- ================= 子页面 2：进入网页 Landing（占位入口容器）================= -->
+  <!-- ⚠️ 占位：仅供检查 section 切换交互，正式布局后替换 -->
+  <section id="landing" class="section">
+    <div class="stage placeholder-stage">
+      <p class="placeholder-title">进入网页（占位）</p> <!-- 可调整-文字 -->
+      <!-- 占位缩略图：点击进入作品，方便检查过渡 B 交互 -->
+      <button class="placeholder-thumb" type="button" data-goto="work">作品缩略图</button>
+      <button class="placeholder-back" type="button" data-goto="home">← 返回首页</button>
+    </div>
+  </section>
+
+  <!-- ================= 子页面 3：进入作品 Work Detail（占位入口容器）================= -->
+  <!-- ⚠️ 占位：仅供检查 section 切换交互，正式布局后替换 -->
+  <section id="work" class="section">
+    <div class="stage placeholder-stage">
+      <p class="placeholder-title">进入作品（占位）</p> <!-- 可调整-文字 -->
+      <button class="placeholder-back" type="button" data-goto="landing">← 返回作品总览</button>
+    </div>
+  </section>
+
+  <!-- ================= 常驻音乐播放器（左下角线框彩蛋，跨 section 不卸载）================= -->
+  <div id="player">
+    <!-- TODO: L 形层叠线框入口 + 常驻 <audio> -->
+  </div>
+
+  <!-- ================= SPA 入口脚本 ================= -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

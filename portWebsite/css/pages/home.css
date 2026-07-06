@@ -1,0 +1,366 @@
+/* ==========================================================================
+   首页 Homepage 专属样式
+   —— 所有首页元素都相对整个 #home / 视口定位，不再依赖 16:9 stage
+   —— 层级：Shop(最底文字) < 内容 < 全屏装饰边框(border-image 9-slice) < 箭头
+   —— 边框：上下边只拉 X、左右边只拉 Y、四角固定；中间不加 fill，透明露内容
+   —— 检索标签：可调整-位置 / 可调整-尺寸 / 可调整-边框-大小 / 可调整-文字 / 可调整-颜色 / 可调整-速度 / 可调整-素材
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ */
+/* 首页集中调参区：所有素材 / 文字容器都从这里调                         */
+/* ------------------------------------------------------------------ */
+#home {
+  /* 可调整-边框-大小：切线（素材像素，上 右 下 左）—— 在 PS 量四角装饰后微调 */
+  --home-frame-slice-top: 150;
+  --home-frame-slice-right: 150;
+  --home-frame-slice-bottom: 150;
+  --home-frame-slice-left: 150;
+  /* 可调整-边框-大小：页面上边框显示粗细（建议与 slice 同量级） */
+  --home-frame-border-width: 90px;
+  /* 可调整-边框-大小：边条拉伸方式 stretch | repeat | round */
+  --home-frame-repeat: stretch;
+
+  /* 可调整-位置 / 可调整-尺寸：Shop 手写字全屏画布（当前素材是 1920x1080 整图） */
+  --home-shop-left: 0vw;
+  --home-shop-top: 8vh;
+  --home-shop-width: 100vw;
+  --home-shop-height: 100vh;
+
+  /* 可调整-位置 / 可调整-尺寸：自拍爆炸贴纸 */
+  --home-selfie-left: 5vw;
+  --home-selfie-top: 10vh;
+  --home-selfie-height: clamp(300px, 80vh, 1000px);
+
+  /* 可调整-位置 / 可调整-尺寸：右上 sells / everything 标语 */
+  --home-tagline-right: 6vw;
+  --home-tagline-top: 22vh;
+  --home-tagline-width: clamp(100px, 20vw, 700px);
+  --home-tagline-line-gap: 1vw;     /* 可调整-尺寸：sells 与 everything 两行间距（可为负值收紧） */
+
+  /* 可调整-位置 / 可调整-尺寸：右下信息容器（底部锚定：距视口底的距离，内容多时往上长不被裁） */
+  --home-info-right: 6vw;
+  --home-info-bottom: calc(var(--home-frame-border-width) + 3vh);
+  --home-info-width: clamp(420px, 50vw, 920px);
+  --home-info-gap: clamp(8px, 0.65vw, 20px); /* 可调整-尺寸：左右两列间距 */
+  --home-info-padding: clamp(8px, 0.9vw, 18px); /* 可调整-尺寸：外框与内容间隔 */
+  --home-info-panel-padding: clamp(6px, 0.65vw, 14px); /* 可调整-尺寸：右侧内线框内边距 */
+
+  /* 可调整-尺寸：姓名框与字号 */
+  --home-name-cn-size: clamp(20px, 2.15vw, 40px);
+  --home-name-kana-size: clamp(11px, 1.05vw, 18px);
+  --home-name-padding-y: clamp(5px, 0.55vw, 10px);
+  --home-name-padding-x: clamp(8px, 0.85vw, 16px);
+  --home-role-size: clamp(10px, 1.15vw, 24px);
+  --home-role-gap: clamp(8px, 0.9vw, 18px);
+  --home-timeline-size: clamp(13px, 1.22vw, 22px);
+  --home-timeline-desc-inset: 3em; /* 可调整-尺寸：时间线说明列右侧留白 */
+  --home-right-body-size: clamp(12px, 1.0vw, 20px);
+  --home-right-heading-size: clamp(16px, 1.65vw, 40px); /* 右侧标题 = 正文约 130% */
+  --home-note-indent: 1em; /* 可调整-尺寸：「なんでも屋」备注行左缩进 */
+  --home-push-point-top: 45%;
+  /* 右缘伸出内线框、落在外框留白里（伸出量 = 外框 padding 的 70%，不会超过最外侧线框） */
+  --home-push-point-right: calc(-0.3 * var(--home-info-padding));
+  --home-push-point-width: clamp(96px, 10vw, 160px);
+  --home-push-point-height: clamp(42px, 5vw, 60px);
+  --home-push-point-size: clamp(12px, 2vw, 20px);
+
+  /* 可调整-位置 / 可调整-尺寸：NEW!! */
+  --home-new-left: 24vw;
+  --home-new-top: 70vh;
+  --home-new-font-size: clamp(44px, 8vw, 118px);
+
+  /* 可调整-位置 / 可调整-尺寸：向下箭头（锚定右下信息卡正下方） */
+  --home-arrow-size: clamp(36px, 4vw, 84px);
+  /* 水平：信息卡中线（想左右挪就在末尾加减 vw，如 ... - 5vw） */
+  --home-arrow-left: calc(100vw - var(--home-info-right) - var(--home-info-width) / 2);
+  /* 垂直：信息卡下缘再往下 0.5vh（调 0.5vh 控制与卡片的间隙） */
+  --home-arrow-bottom: calc(var(--home-info-bottom) - var(--home-arrow-size) - 0.5vh);
+
+  overflow: hidden;              /* 全屏边框贴视口四边，超出视口的部分裁掉 */
+}
+
+/* ------------------------------------------------------------------ */
+/* 全屏装饰边框：border-image 九宫格（9-slice），素材 HomepageFrame.png   */
+/* —— 上/下边只沿 X 拉伸，左/右边只沿 Y 拉伸，四角不拉伸                  */
+/* —— 不加 fill：中间透明，下层自拍/文字露出                              */
+/* —— 元素本身铺满整个 #home 视口，所以边条会随浏览器宽高自适应拉伸        */
+/* —— 换图：改 border-image-source 路径（可调整-素材）                    */
+/* ------------------------------------------------------------------ */
+.home-frame {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: var(--home-frame-border-width);
+  border-color: transparent;     /* 实际图案由 border-image 提供 */
+  border-image-source: url("../../asset/pages/home/HomepageFrame.png");
+  border-image-slice:
+    var(--home-frame-slice-top)
+    var(--home-frame-slice-right)
+    var(--home-frame-slice-bottom)
+    var(--home-frame-slice-left); /* 不加 fill → 中间透明 */
+  border-image-width: var(--home-frame-border-width);
+  border-image-repeat: var(--home-frame-repeat);
+  z-index: 3;                    /* 在文字内容之上（透明中心区不挡字） */
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 手写 Shop：所有文字层的最下层（在 sells / 信息块 / NEW!! 之下）      */
+/* 换图见 index.html 的 .home-shop（可调整-素材）                       */
+/* ------------------------------------------------------------------ */
+.home-shop {
+  position: absolute;
+  left: var(--home-shop-left);       /* 可调整-位置：Shop 水平位置 */
+  top: var(--home-shop-top);         /* 可调整-位置：Shop 垂直位置 */
+  width: var(--home-shop-width);     /* 可调整-尺寸：Shop 画布宽度 */
+  height: var(--home-shop-height);   /* 可调整-尺寸：Shop 画布高度 */
+  object-fit: cover;
+  z-index: 2;                        /* 最底文字层 */
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 左侧：红色爆炸贴纸自拍（帧序列在此循环微动）                         */
+/* ------------------------------------------------------------------ */
+.home-selfie {
+  position: absolute;
+  left: var(--home-selfie-left);       /* 可调整-位置：自拍水平位置 */
+  top: var(--home-selfie-top);         /* 可调整-位置：自拍垂直位置 */
+  height: var(--home-selfie-height);   /* 可调整-尺寸：自拍高度（宽度按图片比例自适应） */
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 右上：sells (almost) everything（黑色 Georgia 斜体）                */
+/* ------------------------------------------------------------------ */
+.home-tagline {
+  position: absolute;
+  top: var(--home-tagline-top);       /* 可调整-位置：标语垂直位置 */
+  right: var(--home-tagline-right);   /* 可调整-位置：标语水平位置 */
+  width: max-content;                 /* 宽度自动 = 最宽一行（everything），sells 与它共用右边线 */
+  z-index: 2;
+  text-align: right;
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: #000;                        /* 可调整-颜色：标语文字色 */
+  line-height: 1;
+}
+
+.home-tagline .t-sells {
+  display: block;
+  font-size: clamp(28px, 3.5vw, 86px); /* 可调整-尺寸：sells 字号 */
+  margin-right: 0.5vw;
+  margin-bottom: var(--home-tagline-line-gap); /* 可调整-尺寸：两行间距 */
+}
+
+.home-tagline .t-everything {
+  display: block;
+  font-size: clamp(28px, 3.5vw, 86px);  /* 可调整-尺寸：everything 字号 */
+  white-space: nowrap;
+}
+
+.home-tagline .t-almost {
+  font-size: clamp(18px, 2vw, 54px); /* 可调整-尺寸：(almost) 字号 */
+}
+
+/* ------------------------------------------------------------------ */
+/* 右下：绿色信息块（会员卡资料，原始两列排版）                         */
+/* 文案在 index.html 的 .home-info 内改（可调整-文字）                  */
+/* ------------------------------------------------------------------ */
+.home-info {
+  position: absolute;
+  right: var(--home-info-right);       /* 可调整-位置：信息块水平位置 */
+  bottom: var(--home-info-bottom);     /* 可调整-位置：信息块距底距离（底部锚定，下边框不会被裁） */
+  /* 可调整-尺寸：信息块宽度（min 保险：窄窗口时不超出边框内区） */
+  width: min(var(--home-info-width), calc(100vw - 2 * var(--home-info-right) - 2 * var(--home-frame-border-width)));
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;      /* 可调整-尺寸：左右两列比例 */
+  gap: var(--home-info-gap);           /* 可调整-尺寸：两列间距 */
+  padding: var(--home-info-padding);   /* 可调整-尺寸：外框与内容间隔 */
+  border: 2px solid var(--color-green-line); /* 可调整-尺寸/颜色：外框粗细·颜色 */
+  color: var(--color-green-line);      /* 可调整-颜色：信息块文字色 */
+  font-family: var(--font-gothic);
+  font-weight: 400;                    /* YuGothR：右侧信息默认字重 */
+  font-size: clamp(12px, 1.1vw, 20px); /* 可调整-尺寸：信息块正文字号 */
+  line-height: 1.35;
+}
+
+/* 左右列通用 */
+.home-info .info-col {
+  min-width: 0;
+}
+
+/* 右侧分栏：独立绿线框（对齐原始设计图） */
+.home-info .info-col--right {
+  display: flex;
+}
+
+.home-info .info-panel {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;              /* 纵向排列：备注可推到面板底部 */
+  border: 2px solid var(--color-green-line); /* 可调整-尺寸/颜色：右侧内线框 */
+  padding: var(--home-info-panel-padding);
+  box-sizing: border-box;
+  font-weight: 400;                    /* YuGothR：右侧边栏统一 REGULAR */
+}
+
+/* 姓名框 + 右侧职业说明（顶部对齐） */
+.home-info .info-name-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--home-role-gap);
+  margin-bottom: clamp(6px, 0.7vw, 14px);
+}
+
+/* 姓名小框（紧凑包裹文字，不占满整列宽） */
+.home-info .info-name {
+  width: fit-content;
+  max-width: 100%;
+  margin-left: 0;                      /* 与下方时间线年份列同一条左边线（改回 auto 即恢复居中） */
+  margin-right: 0;                     /* 不再推开右侧职业说明（CGデザイナー志望紧贴姓名框） */
+  border: 2px solid var(--color-green-line); /* 可调整-尺寸/颜色：姓名框 */
+  padding: var(--home-name-padding-y) var(--home-name-padding-x);
+  text-align: center;
+}
+
+.home-info .info-role {
+  font-size: var(--home-role-size);
+  font-weight: 500;                    /* YuGothM：小字说明 */
+  line-height: 1.25;
+  text-align: left;
+  letter-spacing: 0.035em;
+}
+
+.home-info .info-name .name-cn {
+  font-size: var(--home-name-cn-size); /* 可调整-尺寸：中文名字号 */
+  font-weight: 700;                    /* YuGothB：标题级绿字 */
+  letter-spacing: 0.15vw;              /* 可调整-尺寸：中文名字距 */
+}
+
+.home-info .info-name .name-kana {
+  font-size: var(--home-name-kana-size); /* 可调整-尺寸：假名字号 */
+  font-weight: 700;                    /* YuGothB：姓名框统一 bold */
+  letter-spacing: 0.12vw;
+}
+
+/* 时间线 / 列表项通用 */
+.home-info ul {
+  list-style: none;
+  font-weight: 500;                    /* YuGothM：时间线正文 */
+}
+
+.home-info .info-timeline {
+  font-size: var(--home-timeline-size);
+  line-height: 1.36;
+  letter-spacing: 0.035em;             /* 可调整-尺寸：左侧时间线字间距 */
+}
+
+.home-info .info-timeline li {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 1em;
+}
+
+.home-info .timeline-year {
+  text-align: left;
+}
+
+.home-info .timeline-desc {
+  padding-right: var(--home-timeline-desc-inset);
+  text-align: right;
+}
+
+.home-info .info-heading {
+  margin-bottom: 0.2em;
+  font-size: var(--home-right-heading-size);
+  font-weight: 400;                    /* YuGothR：右侧标题 */
+}
+
+.home-info .info-sub {
+  padding-left: 1.9em;                  /* 可调整-尺寸：说明文字缩进，越过标题「・」与文字对齐 */
+  margin-bottom: 0.8em;
+  font-size: var(--home-right-body-size);
+  font-weight: 400;                    /* YuGothR：右侧说明正文 */
+  opacity: 0.95;
+}
+
+.home-info .info-push-point {
+  position: absolute;
+  top: var(--home-push-point-top);
+  right: var(--home-push-point-right);
+  width: var(--home-push-point-width);
+  height: var(--home-push-point-height);
+  box-sizing: border-box;
+  border: 2px solid var(--color-green-script); /* 可调整-颜色：推しポイント线框（#04EA0F） */
+  color: var(--color-green-script);            /* 可调整-颜色：推しポイント文字（#04EA0F） */
+  display: flex;
+  align-items: center;                 /* 文字垂直居中 */
+  justify-content: center;             /* 文字水平居中 */
+  padding: 0.35em 0.55em;
+  font-size: var(--home-push-point-size);
+  font-weight: 500;                    /* YuGothM：右侧小框文字 */
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+.home-info .info-note {
+  margin-top: auto;                    /* 推到内线框底部（对齐设计稿） */
+  padding-left: var(--home-note-indent);
+  font-size: var(--home-right-body-size);
+  font-weight: 400;                    /* YuGothR：备注 */
+}
+
+/* ------------------------------------------------------------------ */
+/* NEW!!（红字，Calibri 粗斜体；后续可接入帧动画）                     */
+/* ------------------------------------------------------------------ */
+.home-new {
+  position: absolute;
+  left: var(--home-new-left);           /* 可调整-位置：NEW!! 水平位置 */
+  top: var(--home-new-top);             /* 可调整-位置：NEW!! 垂直位置 */
+  z-index: 2;
+  font-family: var(--font-new);
+  font-weight: 700;
+  font-style: italic;
+  font-size: var(--home-new-font-size); /* 可调整-尺寸：NEW!! 字号 */
+  color: var(--color-new);              /* 可调整-颜色：NEW!! 颜色 */
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 底部：绿色向下箭头（进入进入网页的入口触发）                         */
+/* ------------------------------------------------------------------ */
+.home-arrow {
+  position: absolute;
+  left: var(--home-arrow-left);         /* 可调整-位置：箭头水平位置 */
+  bottom: var(--home-arrow-bottom);     /* 可调整-位置：箭头垂直位置 */
+  transform: translateX(-50%);
+  z-index: 4;
+  width: var(--home-arrow-size);        /* 可调整-尺寸：箭头点击区宽 */
+  height: var(--home-arrow-size);       /* 可调整-尺寸：箭头点击区高 */
+  border: none;
+  background: transparent;
+  color: var(--color-green-line);       /* 可调整-颜色：箭头颜色 */
+  font-size: calc(var(--home-arrow-size) * 0.8); /* 可调整-尺寸：箭头字号 */
+  line-height: 1;
+  cursor: pointer;
+  /* 可调整-速度：箭头跳动周期（1.2s） */
+  animation: home-arrow-bob 1.2s ease-in-out infinite;
+}
+
+.home-arrow:hover {
+  filter: brightness(1.2);
+}
+
+/* 箭头上下轻微跳动，提示可点 */
+@keyframes home-arrow-bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(0.8vh); } /* 可调整-尺寸：跳动幅度 */
+}

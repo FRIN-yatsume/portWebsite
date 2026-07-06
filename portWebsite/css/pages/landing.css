@@ -1,0 +1,65 @@
+/* ==========================================================================
+   进入网页 Landing / 作品总览 专属样式
+   —— 布局占位，具体尺寸与定位待实现
+   —— 检索标签：可调整-位置 / 可调整-尺寸 / 可调整-颜色 / 可调整-文字
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ */
+/* 进入网页根容器                                                       */
+/* ------------------------------------------------------------------ */
+#landing {
+  /* TODO: 主白框面板整体框架 */
+}
+
+/* —— 布局分区备忘（待实现）——
+   左上：店主头像（缩小版爆炸贴纸，从首页飞入落位）
+   头像旁：绿色线框 RPG 对话框
+   左侧大 Main 区（手写 Main + 主推作品大展示）
+   右侧橙色框缩略图网格：3D(ほか) 一排三个 / 2D(ほか) 一排三个（可多排）
+   右侧：白色滚动条
+   左下：白色 L 形层叠线框（音乐播放器彩蛋）
+*/
+
+/* ==========================================================================
+   临时占位入口容器（landing + work 共用）—— 仅用于检查 section 切换交互
+   —— ⚠️ 正式布局落地后删除本段
+   —— 检索标签：可调整-尺寸 / 可调整-颜色 / 可调整-文字
+   ========================================================================== */
+.placeholder-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2cqw;                       /* 可调整-尺寸：占位元素间距 */
+  border: 0.3cqw dashed var(--color-white); /* 可调整-尺寸/颜色：占位虚线框 */
+}
+
+.placeholder-title {
+  color: var(--color-white);       /* 可调整-颜色：占位标题色 */
+  font-family: var(--font-gothic);
+  font-size: 3cqw;                 /* 可调整-尺寸：占位标题字号 */
+}
+
+.placeholder-thumb {
+  border: 0.3cqw solid var(--color-orange); /* 可调整-尺寸/颜色：占位缩略图框 */
+  background: transparent;
+  color: var(--color-orange);      /* 可调整-颜色：占位缩略图文字色 */
+  font-family: var(--font-gothic);
+  font-size: 2cqw;                 /* 可调整-尺寸：占位缩略图字号 */
+  padding: 3cqw 6cqw;              /* 可调整-尺寸：占位缩略图大小 */
+  cursor: pointer;
+}
+
+.placeholder-thumb:hover {
+  background: rgba(246, 161, 75, 0.15);
+}
+
+.placeholder-back {
+  border: none;
+  background: transparent;
+  color: var(--color-green-line);  /* 可调整-颜色：返回链接色 */
+  font-family: var(--font-gothic);
+  font-size: 1.8cqw;               /* 可调整-尺寸：返回链接字号 */
+  text-decoration: underline;
+  cursor: pointer;
+}
