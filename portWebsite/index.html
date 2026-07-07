@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="css/shared/background.css" />
   <link rel="stylesheet" href="css/shared/fonts.css" />
   <link rel="stylesheet" href="css/shared/components.css" />
+  <link rel="stylesheet" href="css/shared/lightbox.css" />
   <link rel="stylesheet" href="css/shared/player.css" />
   <link rel="stylesheet" href="css/pages/home.css" />
   <link rel="stylesheet" href="css/pages/landing.css" />
@@ -132,12 +133,42 @@
     </div>
   </section>
 
-  <!-- ================= 子页面 3：进入作品 Work Detail（占位入口容器）================= -->
-  <!-- ⚠️ 占位：仅供检查 section 切换交互，正式布局后替换 -->
+  <!-- ================= 子页面 3：进入作品 Work Detail ================= -->
   <section id="work" class="section">
-    <div class="stage placeholder-stage">
-      <p class="placeholder-title">进入作品（占位）</p> <!-- 可调整-文字 -->
-      <button class="placeholder-back" type="button" data-goto="landing">← 返回作品总览</button>
+    <div class="stage work-stage">
+      <!-- 返回作品总览 -->
+      <button class="work-back" type="button" data-goto="landing" aria-label="返回作品总览">&#x2190;</button>
+
+      <!-- 白描边主框架 -->
+      <div class="work-panel panel-white" aria-hidden="true"></div>
+
+      <!-- 左上：作品标题（JS 填充） -->
+      <h1 class="work-title"></h1>
+
+      <!-- 左大白框：主展示 -->
+      <div class="work-main panel-white"></div>
+
+      <!-- 右上橙框：细节视频 -->
+      <div class="work-detail frame-orange"></div>
+
+      <!-- 右侧：说明文章（可滚动视口） -->
+      <div class="work-desc-viewport">
+        <div class="work-desc"></div>
+      </div>
+
+      <!-- 右缘：拖拽滑块（与 landing 同款） -->
+      <div class="work-scrollbar" aria-label="说明区滚动">
+        <button class="work-scrollbar-thumb" type="button" aria-label="拖动浏览说明"></button>
+      </div>
+
+      <!-- 右下橙框：turntable / video3 -->
+      <div class="work-turntable frame-orange"></div>
+
+      <!-- 左下：模型下载链接 -->
+      <a class="work-download is-hidden" href="#" target="_blank" rel="noopener">modlesDownloadLink</a>
+
+      <!-- 页面最底部「下一个」 -->
+      <button class="work-next is-hidden" type="button" data-goto="work">下一个</button>
     </div>
   </section>
 
@@ -166,6 +197,12 @@
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- ================= 视频 Lightbox（跨 section 常驻）================= -->
+  <div id="lightbox" class="lightbox is-hidden" aria-hidden="true">
+    <div class="lightbox-backdrop"></div>
+    <div class="lightbox-stage"></div>
   </div>
 
   <!-- ================= SPA 入口脚本 ================= -->

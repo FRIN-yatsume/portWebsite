@@ -15,8 +15,10 @@ import {
 import "./modules/dialog.js";
 import "./modules/player.js";
 import "./modules/turntable.js";
-import "./modules/lightbox.js";
+import { initLightbox } from "./modules/lightbox.js";
+import { bindWorkDescScroll } from "./modules/workDescScroll.js";
 import { playFrameSequence } from "./modules/frameSequence.js";
+import { renderWork, pauseWorkVideos } from "./modules/workPage.js";
 
 // ------------------------------------------------------------------
 // section 切换管理（home ↔ landing 已由 transition.js 过渡 A 接管，
@@ -41,13 +43,20 @@ function activeSectionId() {
 
 // 切换到指定 section
 // —— home ↔ landing 这对切换委托给过渡 A（点击/滚轮/键盘三种触发统一走动画）
-// —— 其余组合暂用 base.css 的简易交叉淡入淡出
-function showSection(id) {
+// —— landing → work 时先渲染作品详情再交叉淡入
+// —— 离开 work 时暂停详情页视频
+function showSection(id, opts = {}) {
   const target = sections.get(id);
   if (!target || isTransitioning()) return;
 
   const from = activeSectionId();
-  if (from === id) return;
+  if (from === id) {
+    // 作品页内切换「下一个」：同 section 但换作品
+    if (id === "work" && opts.workId) {
+      renderWork(opts.workId);
+    }
+    return;
+  }
 
   if (from === "home" && id === "landing") {
     playTransitionA();
@@ -58,17 +67,37 @@ function showSection(id) {
     return;
   }
 
+  // 离开作品页时暂停所有 video
+  if (from === "work") {
+    pauseWorkVideos();
+  }
+
+  // 进入作品页前渲染对应作品
+  if (id === "work" && opts.workId) {
+    renderWork(opts.workId);
+  }
+
   sections.forEach((el) => el.classList.toggle("is-active", el === target));
 }
 
 // ------------------------------------------------------------------
 // 全局入口触发：任何带 data-goto 的元素点击后切换到对应 section
+// —— 带 data-work-id 的入口会先渲染对应作品再进入 #work
 // ------------------------------------------------------------------
 function bindNavigation() {
   document.addEventListener("click", (e) => {
     const trigger = e.target.closest("[data-goto]");
     if (!trigger) return;
-    showSection(trigger.dataset.goto);
+
+    const goto = trigger.dataset.goto;
+    const workId = trigger.dataset.workId;
+
+    if (goto === "work" && workId) {
+      showSection("work", { workId });
+      return;
+    }
+
+    showSection(goto);
   });
 }
 
@@ -146,6 +175,59 @@ function workThumbSrc(work) {
   return work.thumb || work.images?.[0] || "";
 }
 
+// ------------------------------------------------------------------
+// 缩略图 hover 视频轮播 + 项目名叠层 + 暗色背景
+// ------------------------------------------------------------------
+function bindThumbPreview(btn, work) {
+  const videos = work.videos?.filter(Boolean);
+  if (!videos?.length) return;
+
+  const video = document.createElement("video");
+  video.className = "landing-thumb-preview";
+  video.muted = true;
+  video.playsInline = true;
+
+  const dim = document.createElement("div");
+  dim.className = "landing-thumb-dim";
+  dim.setAttribute("aria-hidden", "true");
+
+  const label = document.createElement("span");
+  label.className = "landing-thumb-label";
+  label.textContent = work.projectName;
+
+  btn.appendChild(video);
+  btn.appendChild(dim);
+  btn.appendChild(label);
+
+  let videoIndex = 0;
+
+  const playCurrent = () => {
+    video.src = videos[videoIndex];
+    video.currentTime = 0;
+    video.play().catch(() => {});
+  };
+
+  const onEnded = () => {
+    videoIndex = (videoIndex + 1) % videos.length;
+    playCurrent();
+  };
+
+  btn.addEventListener("mouseenter", () => {
+    btn.classList.add("is-previewing");
+    videoIndex = 0;
+    video.addEventListener("ended", onEnded);
+    playCurrent();
+  });
+
+  btn.addEventListener("mouseleave", () => {
+    btn.classList.remove("is-previewing");
+    video.removeEventListener("ended", onEnded);
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+  });
+}
+
 // 渲染单个分类网格（仅渲染数据中的真实作品，不补空框）
 function renderLandingGrid(category, gridEl) {
   if (!gridEl) return;
@@ -167,6 +249,7 @@ function renderLandingGrid(category, gridEl) {
     img.alt = work.title;
     img.addEventListener("load", refreshLandingShelfScroll, { once: true });
     btn.appendChild(img);
+    bindThumbPreview(btn, work);
     gridEl.appendChild(btn);
   });
 }
@@ -179,10 +262,12 @@ function renderLanding() {
 
   // Main 区 = 全站 order 最小的主推作品首图
   const mainWork = [...works].sort((a, b) => a.order - b.order)[0];
+  const mainBtn = document.querySelector(".landing-main");
   const mainImg = document.querySelector(".landing-main-img");
   if (mainWork && mainImg) {
     mainImg.src = workThumbSrc(mainWork);
     mainImg.alt = mainWork.title;
+    if (mainBtn) mainBtn.dataset.workId = mainWork.id;
   }
 
   refreshLandingShelfScroll();
@@ -400,6 +485,8 @@ function init() {
   renderLanding();
   startLandingAvatar();
   bindLandingShelfScroll();
+  bindWorkDescScroll();
+  initLightbox();
   // TODO: 装配常驻播放器
 }
 

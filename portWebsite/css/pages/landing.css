@@ -275,6 +275,7 @@
 /* 单个缩略图：橙框（有作品可点进作品页） */
 .landing-thumb {
   direction: ltr;
+  position: relative;
   aspect-ratio: 1;                        /* 可调整-尺寸：缩略图保持方框 */
   border: 2px solid var(--color-orange);
   background: transparent;
@@ -292,6 +293,57 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* 缩略图 hover 视频预览（默认隐藏，is-previewing 时切换显示） */
+.landing-thumb video {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.landing-thumb.is-previewing img {
+  display: none;
+}
+
+.landing-thumb.is-previewing video {
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+/* hover 暗色叠层 */
+.landing-thumb-dim {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.35);      /* 可调整-颜色：hover 暗色叠层 */
+  pointer-events: none;
+}
+
+.landing-thumb.is-previewing .landing-thumb-dim {
+  display: block;
+}
+
+/* hover 项目名（白字 gothic，居中叠在视频上） */
+.landing-thumb-label {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-white);              /* 可调整-颜色：项目名白字 */
+  font-family: var(--font-gothic);
+  font-weight: 700;
+  font-size: 3.5cqh;                      /* 可调整-尺寸：项目名字号 */
+  pointer-events: none;
+}
+
+.landing-thumb.is-previewing .landing-thumb-label {
+  display: flex;
 }
 
 /* ------------------------------------------------------------------ */

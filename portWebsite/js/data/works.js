@@ -15,9 +15,10 @@
  * @property {string}   title         作品页左上标题
  * @property {string}   [thumb]       缩略图（默认取 Image_(项目名)1.png，可覆盖）
  * @property {string[]} images        编号图片，1 = 主展示
- * @property {string[]} [videos]      编号视频，1 = 主展示（左大白框），2 = 细节（右上橙框）
+ * @property {string[]} [videos]      编号视频；说明区 {{video:N}} + 书架 hover 轮播
+ * @property {string[]} [mainVideos] 左大白框轮播（独立配置；缺省回退 videos）
  * @property {string[]} [turntable]   右下橙框 模型旋转帧序列
- * @property {string}   [descriptionMd] 说明文章（markdown 路径）
+ * @property {string}   [descriptionMd] 说明文章（markdown 路径；支持 {{video:N}} 混排）
  * @property {string}   [downloadUrl] 模型下载链接（无则隐藏链接）
  */
 
@@ -41,5 +42,32 @@ export const works = [
     turntable: [],                  // 可调整-素材：模型旋转帧序列
     descriptionMd: "asset/works/Sample/Sample.md", // 可调整-素材：说明文章
     downloadUrl: "",                // 可调整-文字：模型下载链接（空则隐藏）
+  },
+  // ------------------------------------------------------------------
+  // School —— Back Room Maze（3D 作品）
+  // ------------------------------------------------------------------
+  {
+    id: "work_school",
+    projectName: "school",
+    category: "3D",
+    order: 2,
+    title: "· Back Room Maze",
+    thumb: "asset/works/school/school_1image.png",
+    images: ["asset/works/school/school_1image.png"],
+    videos: [
+      "asset/works/school/school_1video.mp4",
+      "asset/works/school/school_2video.mp4",
+      "asset/works/school/school_3video.mp4",
+      "asset/works/school/school_4video.mp4",
+    ],
+    mainVideos: [
+      // 可调整-素材：左大白框轮播（仅 1–3；与 videos / 说明区可分开配置）
+      "asset/works/school/school_1video.mp4",
+      "asset/works/school/school_2video.mp4",
+      "asset/works/school/school_3video.mp4",
+    ],
+    turntable: [],
+    descriptionMd: "asset/works/school/school.md",
+    downloadUrl: "",
   },
 ];
