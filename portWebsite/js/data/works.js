@@ -20,6 +20,7 @@
  * @property {string[]} [turntable]   右下橙框 模型旋转帧序列
  * @property {string}   [descriptionMd] 说明文章（markdown 路径；支持 {{video:N}} 混排）
  * @property {string}   [downloadUrl] 模型下载链接（无则隐藏链接）
+ * @property {number}   hours         制作用时（小时，展示为 48H）
  */
 
 /** @type {Work[]} */
@@ -42,6 +43,7 @@ export const works = [
     turntable: [],                  // 可调整-素材：模型旋转帧序列
     descriptionMd: "asset/works/Sample/Sample.md", // 可调整-素材：说明文章
     downloadUrl: "",                // 可调整-文字：模型下载链接（空则隐藏）
+    hours: 24,                      // 可调整-文字：制作用时（小时）
   },
   // ------------------------------------------------------------------
   // School —— Back Room Maze（3D 作品）
@@ -69,5 +71,6 @@ export const works = [
     turntable: [],
     descriptionMd: "asset/works/school/school.md",
     downloadUrl: "",
+    hours: 48,
   },
 ];

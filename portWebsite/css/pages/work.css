@@ -83,8 +83,17 @@
   /* 可调整-位置 / 可调整-尺寸：底部「下一个」 */
   --work-next-bottom: 1.5cqh;
   --work-next-size: 2.2cqh;
+
+  /* 可调整-位置 / 可调整-尺寸：红框1 用时 + 加购（主视频下方） */
+  --work-hours-gap: 1.5cqh;
+  --work-hours-top: calc(var(--work-main-top) + var(--work-main-height) + var(--work-hours-gap));
+  --work-hours-left: var(--work-main-left);
+  --work-hours-size: 3.2cqh;
+  --work-cart-add-size: 4.5cqh;
 }
 
+/* ------------------------------------------------------------------ */
+/* 作品舞台                                                           */
 /* ------------------------------------------------------------------ */
 /* 通用隐藏类                                                           */
 /* ------------------------------------------------------------------ */
@@ -338,4 +347,78 @@
 
 .work-next:hover {
   filter: brightness(1.2);
+}
+
+/* ------------------------------------------------------------------ */
+/* 左下：用时 + 加购（Unicode UI，红框1）                               */
+/* ------------------------------------------------------------------ */
+.work-hours-bar {
+  position: absolute;
+  left: var(--work-hours-left);
+  top: var(--work-hours-top);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 1.5cqw;
+}
+
+.work-hours-value {
+  font-family: var(--font-gothic);
+  font-size: var(--work-hours-size);
+  font-weight: 700;
+  color: var(--color-work-text);
+  line-height: 1;
+}
+
+.work-cart-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--work-cart-add-size);
+  height: var(--work-cart-add-size);
+  padding: 0;
+  border: 1px solid var(--color-white);
+  border-radius: 0.8cqw;
+  background: transparent;
+  color: var(--color-work-text);
+  line-height: 1;
+  cursor: pointer;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.work-cart-add-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  height: 70%;
+}
+
+.work-cart-add-svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+}
+
+.work-cart-add:hover:not(.is-in-cart) {
+  filter: brightness(1.2);
+}
+
+.work-cart-add-done {
+  display: none;
+}
+
+.work-cart-add.is-in-cart {
+  opacity: 0.55;
+  pointer-events: none;
+  cursor: default;
+}
+
+.work-cart-add.is-in-cart .work-cart-add-icon {
+  display: none;
+}
+
+.work-cart-add.is-in-cart .work-cart-add-done {
+  display: block;
+  font-size: calc(var(--work-cart-add-size) * 0.5);
 }

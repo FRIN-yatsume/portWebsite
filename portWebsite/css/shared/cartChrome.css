@@ -1,0 +1,68 @@
+/* ==========================================================================
+   购物车侧栏 Chrome（跨 landing / work，镜像舞台坐标）
+   —— 与 #player 同层 fixed + stage-mirror 定位
+   —— landing / work 共用 work 页坐标（集中调参）
+   ========================================================================== */
+
+#cart-chrome {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+#cart-chrome.is-page-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.cart-chrome-mirror {
+  position: relative;
+  width: min(100vw, calc(100vh * 1920 / 1080));
+  aspect-ratio: 1920 / 1080;
+  container-type: size;
+  overflow: visible;
+  pointer-events: none;
+
+  /* 集中调参（cqw/cqh 须在 size container 上定义才能正确解析） */
+  --cart-panel-left: 3.4cqw;
+  --cart-panel-top: 8cqh;
+  --cart-panel-width: 95.5cqw;
+  --cart-sheet-outset: 1cqw;
+  --cart-sheet-top: 8cqh;
+  --cart-sheet-height: calc(100cqh - 8cqh - var(--ui-chrome-bottom));
+  --cart-sheet-width: 36cqw;
+  --cart-sheet-radius: 1.2cqw;
+  --cart-sheet-font: 2cqh;
+  --cart-dock-bottom: 6cqh;
+  --cart-dock-width: 5.5cqw;
+  --cart-dock-height: 5cqh;
+  --cart-badge-size: 2cqh;
+}
+
+.cart-dock {
+  position: absolute;
+  left: calc(var(--cart-panel-left) + var(--cart-panel-width) + var(--cart-sheet-outset));
+  bottom: var(--cart-dock-bottom);
+  z-index: 4;
+  pointer-events: auto;
+  --ui-side-dock-width: var(--cart-dock-width);
+  --ui-side-dock-height: var(--cart-dock-height);
+  --ui-side-badge-size: var(--cart-badge-size);
+}
+
+.cart-sheet {
+  position: absolute;
+  left: calc(var(--cart-panel-left) + var(--cart-panel-width) + var(--cart-sheet-outset));
+  top: var(--cart-sheet-top);
+  height: var(--cart-sheet-height);
+  z-index: 5;
+  pointer-events: auto;
+  --ui-side-sheet-width: var(--cart-sheet-width);
+  --ui-side-sheet-radius: var(--cart-sheet-radius);
+  --ui-side-sheet-font: var(--cart-sheet-font);
+  --ui-side-sheet-outset: var(--cart-sheet-outset);
+}

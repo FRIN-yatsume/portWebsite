@@ -8,6 +8,7 @@
 import { works } from "../data/works.js";
 import { bindVideoLightbox, closeLightbox } from "./lightbox.js";
 import { refreshWorkDescScroll, resetWorkDescScroll } from "./workDescScroll.js";
+import { refreshWorkCartUI, syncHoursBar } from "./workCart.js";
 
 /** @type {string|null} 当前展示的作品 ID */
 let currentWorkId = null;
@@ -212,6 +213,7 @@ export async function renderWork(workId) {
   if (!work) return;
 
   currentWorkId = workId;
+  document.getElementById("work")?.setAttribute("data-current-work-id", workId);
   pauseWorkVideos();
 
   const titleEl = document.querySelector(".work-title");
@@ -298,6 +300,9 @@ export async function renderWork(workId) {
       delete nextBtn.dataset.workId;
     }
   }
+
+  syncHoursBar(work);
+  refreshWorkCartUI(work.id);
 }
 
 // ------------------------------------------------------------------

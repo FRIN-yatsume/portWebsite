@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="css/shared/background.css" />
   <link rel="stylesheet" href="css/shared/fonts.css" />
   <link rel="stylesheet" href="css/shared/components.css" />
+  <link rel="stylesheet" href="css/shared/sidePanel.css" />
+  <link rel="stylesheet" href="css/shared/cartChrome.css" />
   <link rel="stylesheet" href="css/shared/lightbox.css" />
   <link rel="stylesheet" href="css/shared/player.css" />
   <link rel="stylesheet" href="css/pages/home.css" />
@@ -148,6 +150,22 @@
       <!-- 左大白框：主展示 -->
       <div class="work-main panel-white"></div>
 
+      <!-- 左下：用时 + 加购（Unicode UI） -->
+      <div class="work-hours-bar">
+        <span class="work-hours-value" aria-hidden="true"></span>
+        <button class="work-cart-add" type="button" aria-label="加入购物车">
+          <span class="work-cart-add-icon" aria-hidden="true">
+            <svg class="ui-side-dock__icon work-cart-add-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h2l2 10h10l2-8H8" />
+              <circle cx="10" cy="20" r="1.25" />
+              <circle cx="17" cy="20" r="1.25" />
+              <path d="M19 5v4M21 7h-4" />
+            </svg>
+          </span>
+          <span class="work-cart-add-done" aria-hidden="true">&#x2713;</span>
+        </button>
+      </div>
+
       <!-- 右上橙框：细节视频 -->
       <div class="work-detail frame-orange"></div>
 
@@ -171,6 +189,25 @@
       <button class="work-next is-hidden" type="button" data-goto="work">下一个</button>
     </div>
   </section>
+
+  <!-- ================= 常驻购物车侧栏（landing / work 跨页，镜像舞台坐标）================= -->
+  <div id="cart-chrome" class="is-page-hidden" data-page="">
+    <div class="cart-chrome-mirror">
+      <div class="ui-side-dock cart-dock is-hidden">
+        <button class="ui-side-dock__toggle cart-toggle" type="button" aria-label="购物车">
+          <svg class="ui-side-dock__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h2l2 10h10l2-8H8" />
+            <circle cx="10" cy="20" r="1.25" />
+            <circle cx="17" cy="20" r="1.25" />
+          </svg>
+          <span class="ui-side-dock__badge cart-badge"></span>
+        </button>
+      </div>
+      <div class="ui-side-sheet cart-sheet is-hidden" aria-hidden="true">
+        <ul class="ui-side-sheet__list cart-list"></ul>
+      </div>
+    </div>
+  </div>
 
   <!-- ================= 常驻音乐播放器（左下角 L 形线框，跨 section 不卸载）================= -->
   <div id="player" class="is-hidden">

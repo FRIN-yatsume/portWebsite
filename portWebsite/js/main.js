@@ -17,6 +17,7 @@ import "./modules/player.js";
 import "./modules/turntable.js";
 import { initLightbox } from "./modules/lightbox.js";
 import { bindWorkDescScroll } from "./modules/workDescScroll.js";
+import { initWorkCart } from "./modules/workCart.js";
 import { playFrameSequence } from "./modules/frameSequence.js";
 import { renderWork, pauseWorkVideos } from "./modules/workPage.js";
 
@@ -486,6 +487,7 @@ function init() {
   startLandingAvatar();
   bindLandingShelfScroll();
   bindWorkDescScroll();
+  initWorkCart();
   initLightbox();
   // TODO: 装配常驻播放器
 }

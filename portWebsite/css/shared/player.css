@@ -10,7 +10,7 @@
 /* ------------------------------------------------------------------ */
 #player {
   --player-left: -10cqw;                /* 可调整-位置：播放器水平位置 */
-  --player-top: 83cqh;                /* 可调整-位置：播放器垂直位置 */
+  --player-top: calc(100cqh - var(--ui-chrome-bottom)); /* 可调整-位置：与侧栏底边对齐 */
   --player-width: 30cqw;              /* 可调整-尺寸：播放器宽 */
   --player-font-size: 2.5cqh;           /* 可调整-尺寸：控件字号 */
   --player-gap: 1.2cqh;                 /* 可调整-尺寸：控件行间距 */
