@@ -205,6 +205,17 @@
   object-fit: cover;                      /* 可调整-尺寸：主推图填充方式（cover/contain） */
 }
 
+.landing-main .landing-main-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.landing-main.has-video .landing-main-img {
+  display: none;
+}
+
 /* 绿色 Main 字（Georgia Italic，压在展示位下缘） */
 .landing-main-script {
   position: absolute;

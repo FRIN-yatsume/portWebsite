@@ -12,7 +12,7 @@ import {
   playTransitionAReverse,
   isTransitioning,
 } from "./modules/transition.js";
-import "./modules/dialog.js";
+import { initDialog } from "./modules/dialog.js";
 import "./modules/player.js";
 import "./modules/turntable.js";
 import { initLightbox } from "./modules/lightbox.js";
@@ -72,6 +72,9 @@ function showSection(id, opts = {}) {
   if (from === "work") {
     pauseWorkVideos();
   }
+  if (from === "landing") {
+    pauseLandingMainVideo();
+  }
 
   // 进入作品页前渲染对应作品
   if (id === "work" && opts.workId) {
@@ -79,6 +82,10 @@ function showSection(id, opts = {}) {
   }
 
   sections.forEach((el) => el.classList.toggle("is-active", el === target));
+
+  if (id === "landing") {
+    resumeLandingMainVideo();
+  }
 }
 
 // ------------------------------------------------------------------
@@ -176,6 +183,66 @@ function workThumbSrc(work) {
   return work.thumb || work.images?.[0] || "";
 }
 
+// 主推区视频：优先 mainVideos，缺省回退 videos
+function getMainDisplayVideos(work) {
+  const main = work.mainVideos?.filter(Boolean);
+  if (main?.length) return main;
+  return work.videos?.filter(Boolean) ?? [];
+}
+
+/** @type {HTMLVideoElement|null} */
+let landingMainVideo = null;
+
+function pauseLandingMainVideo() {
+  landingMainVideo?.pause();
+}
+
+function resumeLandingMainVideo() {
+  if (!sections.get("landing")?.classList.contains("is-active")) return;
+  landingMainVideo?.play().catch(() => {});
+}
+
+// Landing 左侧 Main 大展示：有视频则自动静音循环播放，否则回退首图
+function setupLandingMainDisplay(mainWork) {
+  const mainBtn = document.querySelector(".landing-main");
+  const mainImg = document.querySelector(".landing-main-img");
+  if (!mainWork || !mainBtn) return;
+
+  mainBtn.dataset.workId = mainWork.id;
+
+  const videos = getMainDisplayVideos(mainWork);
+  if (videos.length) {
+    if (!landingMainVideo) {
+      landingMainVideo = document.createElement("video");
+      landingMainVideo.className = "landing-main-video";
+      landingMainVideo.muted = true;
+      landingMainVideo.playsInline = true;
+      landingMainVideo.loop = true;
+      landingMainVideo.autoplay = true;
+      mainBtn.appendChild(landingMainVideo);
+    }
+
+    landingMainVideo.src = videos[0];
+    mainBtn.classList.add("has-video");
+    if (mainImg) {
+      mainImg.alt = mainWork.title;
+    }
+    resumeLandingMainVideo();
+    return;
+  }
+
+  mainBtn.classList.remove("has-video");
+  landingMainVideo?.pause();
+  if (landingMainVideo) {
+    landingMainVideo.removeAttribute("src");
+    landingMainVideo.load();
+  }
+  if (mainImg) {
+    mainImg.src = workThumbSrc(mainWork);
+    mainImg.alt = mainWork.title;
+  }
+}
+
 // ------------------------------------------------------------------
 // 缩略图 hover 视频轮播 + 项目名叠层 + 暗色背景
 // ------------------------------------------------------------------
@@ -261,15 +328,9 @@ function renderLanding() {
   renderLandingGrid("MS", document.querySelector(".landing-grid--ms"));
   renderLandingGrid("2D", document.querySelector(".landing-grid--2d"));
 
-  // Main 区 = 全站 order 最小的主推作品首图
+  // Main 区 = 全站 order 最小的主推作品（视频优先，否则首图）
   const mainWork = [...works].sort((a, b) => a.order - b.order)[0];
-  const mainBtn = document.querySelector(".landing-main");
-  const mainImg = document.querySelector(".landing-main-img");
-  if (mainWork && mainImg) {
-    mainImg.src = workThumbSrc(mainWork);
-    mainImg.alt = mainWork.title;
-    if (mainBtn) mainBtn.dataset.workId = mainWork.id;
-  }
+  setupLandingMainDisplay(mainWork);
 
   refreshLandingShelfScroll();
 }
@@ -489,6 +550,9 @@ function init() {
   bindWorkDescScroll();
   initWorkCart();
   initLightbox();
+  initDialog();
+  document.addEventListener("landing:activate", resumeLandingMainVideo);
+  document.addEventListener("landing:deactivate", pauseLandingMainVideo);
   // TODO: 装配常驻播放器
 }
 

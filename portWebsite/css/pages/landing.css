@@ -146,14 +146,29 @@
   font-weight: 700;                       /* YuGothB：RPG 台词字重 */
   font-size: var(--landing-dialog-font-size);
   line-height: 1.6;
+  cursor: pointer;                        /* 可调整-交互：点击推进下一句 */
 }
 
-/* 右下角「继续」提示符 ▽（当前句打完后闪烁，先常驻占位） */
+/* 右下角「继续」提示符 ▽（当前句打完后闪烁） */
 .landing-dialog .dialog-next {
   position: absolute;
   right: 2cqw;                            /* 可调整-位置：▽ 水平位置 */
   bottom: 1cqh;                           /* 可调整-位置：▽ 垂直位置 */
   font-size: 2.4cqh;                      /* 可调整-尺寸：▽ 字号 */
+  opacity: 0;
+  animation: none;
+  pointer-events: none;
+}
+
+/* 打字中：隐藏 ▽ */
+.landing-dialog.is-typing .dialog-next {
+  opacity: 0;
+  animation: none;
+}
+
+/* 当前句打完：显示闪烁 ▽ */
+.landing-dialog.is-ready .dialog-next {
+  opacity: 1;
   /* 可调整-速度：▽ 闪烁周期（1s） */
   animation: dialog-next-blink 1s step-end infinite;
 }
@@ -203,6 +218,17 @@
   width: 100%;
   height: 100%;
   object-fit: cover;                      /* 可调整-尺寸：主推图填充方式（cover/contain） */
+}
+
+.landing-main .landing-main-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.landing-main.has-video .landing-main-img {
+  display: none;
 }
 
 /* 绿色 Main 字（Georgia Italic，压在展示位下缘） */

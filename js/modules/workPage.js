@@ -1,7 +1,7 @@
 // ==========================================================================
 // 作品详情页渲染模块（进入作品）
 // —— 由 works 数据表驱动：标题 / 主展示 / 细节框 / 说明 / 下载链接
-// —— 说明区 markdown 支持 {{video:N}} 混排文字/图片/视频
+// —— 说明区 markdown 支持 {{video:N}} / {{image:N}} 混排文字/图片/视频
 // —— 检索标签：可调整-文字（标题/说明）/ 可调整-素材（图片/视频路径）
 // ==========================================================================
 
@@ -47,6 +47,16 @@ function createImg(src, className, alt = "") {
   img.src = src;
   img.alt = alt;
   return img;
+}
+
+// ------------------------------------------------------------------
+// 工具：创建说明区橙框图片（与视频橙框同款）
+// ------------------------------------------------------------------
+function createDescImageFrame(src, alt = "") {
+  const frame = document.createElement("div");
+  frame.className = "work-desc-image frame-orange";
+  frame.appendChild(createImg(src, "work-desc-image-media", alt));
+  return frame;
 }
 
 // ------------------------------------------------------------------
@@ -120,7 +130,7 @@ function setupMainDisplay(container, work) {
 }
 
 // ------------------------------------------------------------------
-// 说明区混排渲染：段落 / 图片 / {{video:N}}（N 为 1-based）
+// 说明区混排渲染：段落 / {{image:N}} / {{video:N}}（N 为 1-based）
 // @returns {Promise<boolean>} 是否渲染出任何内容块
 // ------------------------------------------------------------------
 async function renderDescriptionContent(work, container) {
@@ -128,6 +138,7 @@ async function renderDescriptionContent(work, container) {
 
   const mdPath = work.descriptionMd;
   const videos = work.videos?.filter(Boolean) ?? [];
+  const images = work.images?.filter(Boolean) ?? [];
 
   if (!mdPath) return false;
 
@@ -140,7 +151,6 @@ async function renderDescriptionContent(work, container) {
     text = text.replace(/<!--[\s\S]*?-->/g, "").trim();
     if (!text) return false;
 
-    const mdDir = mdPath.replace(/\/[^/]+$/, "/");
     const blocks = text.split(/\n\s*\n/).filter((b) => b.trim());
     let rendered = false;
 
@@ -159,13 +169,15 @@ async function renderDescriptionContent(work, container) {
         return;
       }
 
-      // 图片块：![alt](path)
-      const imgMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
-      if (imgMatch) {
-        const [, alt, relPath] = imgMatch;
-        const src = relPath.startsWith("asset/") ? relPath : mdDir + relPath;
-        container.appendChild(createImg(src, "work-desc-img", alt));
-        rendered = true;
+      // 图片块：{{image:N}}
+      const imageMatch = trimmed.match(/^\{\{image:(\d+)\}\}$/);
+      if (imageMatch) {
+        const idx = parseInt(imageMatch[1], 10) - 1;
+        const src = images[idx];
+        if (src) {
+          container.appendChild(createDescImageFrame(src, work.title));
+          rendered = true;
+        }
         return;
       }
 
@@ -256,7 +268,7 @@ export async function renderWork(workId) {
     turntableEl?.classList.add("is-hidden");
   }
 
-  // —— 说明区：md 混排（文字 / 图片 / {{video:N}}）——
+  // —— 说明区：md 混排（文字 / {{image:N}} / {{video:N}}）——
   clearEl(descEl);
   resetWorkDescScroll();
   if (work.descriptionMd) {

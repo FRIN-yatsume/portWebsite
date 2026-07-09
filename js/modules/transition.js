@@ -92,6 +92,7 @@ export function playTransitionA() {
     home.classList.remove("is-snapping");
 
     landing.classList.remove("slow-fade");
+    document.dispatchEvent(new CustomEvent("landing:activate"));
     transitioning = false;
   }, durMs);
 }
@@ -129,6 +130,7 @@ export function playTransitionAReverse() {
     selfie.style.transform = "";            // 头像沿直线飞回首页原位
     landing.classList.add("slow-fade");     // landing 用过渡 A 时长淡出
     landing.classList.remove("is-active");
+    document.dispatchEvent(new CustomEvent("landing:deactivate"));
 
     // —— 过渡结束：清理状态 ——
     setTimeout(() => {

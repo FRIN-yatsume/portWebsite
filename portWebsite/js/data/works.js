@@ -14,11 +14,11 @@
  * @property {number}   order         我安排的顺序（全站一条线），底部「下一个」按此递增
  * @property {string}   title         作品页左上标题
  * @property {string}   [thumb]       缩略图（默认取 Image_(项目名)1.png，可覆盖）
- * @property {string[]} images        编号图片，1 = 主展示
+ * @property {string[]} images        编号图片；说明区 {{image:N}}；[0] = 封面/缩略图
  * @property {string[]} [videos]      编号视频；说明区 {{video:N}} + 书架 hover 轮播
  * @property {string[]} [mainVideos] 左大白框轮播（独立配置；缺省回退 videos）
  * @property {string[]} [turntable]   右下橙框 模型旋转帧序列
- * @property {string}   [descriptionMd] 说明文章（markdown 路径；支持 {{video:N}} 混排）
+ * @property {string}   [descriptionMd] 说明文章（markdown 路径；支持 {{video:N}} / {{image:N}} 混排）
  * @property {string}   [downloadUrl] 模型下载链接（无则隐藏链接）
  * @property {number}   hours         制作用时（小时，展示为 48H）
  */
@@ -26,24 +26,35 @@
 /** @type {Work[]} */
 export const works = [
   // ------------------------------------------------------------------
-  // 占位样例作品（Sample）—— 复制此对象即可上新一个作品
+  // Main —— 主推作品（Landing 左侧大展示位）
   // ------------------------------------------------------------------
   {
-    id: "work_sample",              // 唯一 ID（可调整-文字）
-    projectName: "Sample",          // 项目名（可调整-文字）
-    category: "3D",                 // 可调整-文字："3D" | "MS" | "2D"
-    order: 1,                       // 可调整-位置：全站展示顺序（下一个按此递增）
-    title: "· (作品名)",             // 可调整-文字：作品页左上标题
+    id: "work_main",
+    projectName: "main",
+    category: "3D",
+    order: 1,
+    title: "· (作品名)",
+    thumb: "asset/works/1MAIN/main_1image.JPG",
     images: [
-      // 可调整-素材：编号图片，[0] = 主展示 / 缩略图
-      "asset/works/Sample/Image_Sample1.png",
-      "asset/works/Sample/Image_Sample2.png",
+      "asset/works/1MAIN/main_1image.JPG",
+      "asset/works/1MAIN/main_2image.JPG",
+      "asset/works/1MAIN/main_3image.JPG",
+      "asset/works/1MAIN/main_4image.JPG",
+      "asset/works/1MAIN/main_5image.JPG",
+      "asset/works/1MAIN/main_6image.JPG",
+      "asset/works/1MAIN/main_7image.png",
+      "asset/works/1MAIN/main_8image.JPG",
     ],
-    videos: [],                     // 可调整-素材：编号视频（1 主展示 / 2 细节）
-    turntable: [],                  // 可调整-素材：模型旋转帧序列
-    descriptionMd: "asset/works/Sample/Sample.md", // 可调整-素材：说明文章
-    downloadUrl: "",                // 可调整-文字：模型下载链接（空则隐藏）
-    hours: 24,                      // 可调整-文字：制作用时（小时）
+    videos: [
+      "asset/works/1MAIN/main_1videp.mp4",
+    ],
+    mainVideos: [
+      "asset/works/1MAIN/main_1videp.mp4",
+    ],
+    turntable: [],
+    descriptionMd: "asset/works/1MAIN/main.md",
+    downloadUrl: "",
+    hours: 48,
   },
   // ------------------------------------------------------------------
   // School —— Back Room Maze（3D 作品）
@@ -72,5 +83,107 @@ export const works = [
     descriptionMd: "asset/works/school/school.md",
     downloadUrl: "",
     hours: 48,
+  },
+  // ------------------------------------------------------------------
+  // 2D Concept Art
+  // ------------------------------------------------------------------
+  {
+    id: "work_2d_concept_art",
+    projectName: "2DConceptArt",
+    category: "2D",
+    order: 3,
+    title: "· (作品名)",
+    thumb: "asset/works/2D/2DConceptArt/concept_1image.jpg",
+    images: [
+      "asset/works/2D/2DConceptArt/concept_1image.jpg",
+      "asset/works/2D/2DConceptArt/concept_2image.png",
+      "asset/works/2D/2DConceptArt/concept_3image.png",
+      "asset/works/2D/2DConceptArt/concept_4image.png",
+      "asset/works/2D/2DConceptArt/concept_5image.png",
+      "asset/works/2D/2DConceptArt/concept_7image.png",
+      "asset/works/2D/2DConceptArt/concept_8image .jpg",
+      "asset/works/2D/2DConceptArt/concept_9image.jpg",
+      "asset/works/2D/2DConceptArt/concept_10image.png",
+    ],
+    videos: [],
+    turntable: [],
+    descriptionMd: "asset/works/2D/2DConceptArt/2DConceptArt.md",
+    downloadUrl: "",
+    hours: 24,
+  },
+  // ------------------------------------------------------------------
+  // 2D Character Design
+  // ------------------------------------------------------------------
+  {
+    id: "work_2d_character_design",
+    projectName: "2DcharacterDesign",
+    category: "2D",
+    order: 4,
+    title: "· (作品名)",
+    thumb: "asset/works/2D/2DcharacterDesign/2dcharacter_1image .png",
+    images: [
+      "asset/works/2D/2DcharacterDesign/2dcharacter_1image .png",
+      "asset/works/2D/2DcharacterDesign/2dcharacter_2image.PNG",
+      "asset/works/2D/2DcharacterDesign/2dcharacter_３image .PNG",
+      "asset/works/2D/2DcharacterDesign/2dcharacter_4image .PNG",
+      "asset/works/2D/2DcharacterDesign/2dcharacter_5image .png",
+      "asset/works/2D/2DcharacterDesign/2dcharacter_6image .PNG",
+      "asset/works/2D/2DcharacterDesign/2dcharacter_7image .PNG",
+      "asset/works/2D/2DcharacterDesign/2dcharacter_8image .PNG",
+    ],
+    videos: [],
+    turntable: [],
+    descriptionMd: "asset/works/2D/2DcharacterDesign/2DcharacterDesign.md",
+    downloadUrl: "",
+    hours: 24,
+  },
+  // ------------------------------------------------------------------
+  // 2D イラスト
+  // ------------------------------------------------------------------
+  {
+    id: "work_2d_illus",
+    projectName: "2Dイラスト",
+    category: "2D",
+    order: 5,
+    title: "· (作品名)",
+    thumb: "asset/works/2D/2Dイラスト/illus1.png",
+    images: [
+      "asset/works/2D/2Dイラスト/illus1.png",
+      "asset/works/2D/2Dイラスト/illus2.png",
+      "asset/works/2D/2Dイラスト/illus3.png",
+    ],
+    videos: [],
+    turntable: [],
+    descriptionMd: "asset/works/2D/2Dイラスト/2Dイラスト.md",
+    downloadUrl: "",
+    hours: 24,
+  },
+  // ------------------------------------------------------------------
+  // Web
+  // ------------------------------------------------------------------
+  {
+    id: "work_2d_web",
+    projectName: "web",
+    category: "2D",
+    order: 6,
+    title: "· (作品名)",
+    thumb: "asset/works/2D/web/scriptMine_1image.png",
+    images: [
+      "asset/works/2D/web/scriptMine_1image.png",
+      "asset/works/2D/web/scriptMine_2image.png",
+      "asset/works/2D/web/scriptMine_3image.png",
+      "asset/works/2D/web/scriptMine_4image.png.png",
+      "asset/works/2D/web/scriptMine_5image.png",
+    ],
+    videos: [
+      "asset/works/2D/web/scriptMine_1video.mp4",
+    ],
+    mainVideos: [
+      "asset/works/2D/web/scriptMine_1video.mp4",
+    ],
+    turntable: [],
+    descriptionMd: "asset/works/2D/web/web.md",
+    downloadUrl: "",
+    hours: 24,
   },
 ];

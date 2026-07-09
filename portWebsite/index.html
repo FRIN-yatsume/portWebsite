@@ -91,13 +91,14 @@
       <!-- 左上：店主头像（缩小爆炸贴纸；过渡 A 中由首页自拍飞入落位；src 由 JS 帧序列循环替换） -->
       <img class="landing-avatar" src="asset/shared/sticker/selfie/1.png" alt="店主头像" />
 
-      <!-- 头像旁：RPG 绿色对话框（打字机由 dialog.js 后续接管；现阶段静态展示完整台词） -->
-      <div class="landing-dialog">
+      <!-- 头像旁：RPG 绿色对话框（点击推进下一句；两行合并为一句，打字机由 dialog.js 接管） -->
+      <div class="landing-dialog" role="button" tabindex="0" aria-label="店主台词，点击继续">
         <p class="dialog-text">
           いらっしゃいませ！ご来店ありがとうございます。<br />
           私のポートフォリオです。<br />
-          見ている人にも楽しめるように、そういう形になりました。<br />
-          左側の下では、興味で作った曲です。<br />
+          見ている人にも楽しめるように、<br />
+          こういう形になりました。<br />
+          左側の下では、興味で作った曲で<br />
           良かったら聞いてみてください。
         </p>
         <span class="dialog-next" aria-hidden="true">&#x25BD;</span>
@@ -108,7 +109,7 @@
 
       <!-- 左：Main 主推作品大展示位（点击进作品；图片由 JS 按 works 数据填充） -->
       <button class="landing-main" type="button" data-goto="work">
-        <img class="landing-main-img" src="asset/works/Sample/Image_Sample1.png" alt="主推作品" />
+        <img class="landing-main-img" src="asset/works/1MAIN/main_1image.JPG" alt="主推作品" />
       </button>
       <!-- 绿色 Main 字（Georgia Italic，压在展示位下缘） -->
       <div class="landing-main-script" aria-hidden="true">Main</div> <!-- 可调整-文字 -->

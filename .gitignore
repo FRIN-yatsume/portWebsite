@@ -1,0 +1,3 @@
+# Large video files (>100MB) — keep locally, do not push to GitHub
+**/copy_*.MP4
+**/copy_*.mp4
