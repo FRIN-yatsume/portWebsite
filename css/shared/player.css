@@ -1,0 +1,275 @@
+/* ==========================================================================
+   常驻音乐播放器（左下 L 形白框，跨 section 不卸载）
+   —— 镜像 .stage 定比定位，对齐 landing 左下坐标
+   —— UI 全白（与线框同色）；首页隐藏，landing / work 显示
+   —— 检索标签：可调整-位置 / 可调整-尺寸 / 可调整-颜色 / 可调整-文字
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ */
+/* 播放器集中调参区（坐标原 landing.css --landing-player-*）           */
+/* ------------------------------------------------------------------ */
+#player {
+  --player-left: -10cqw;                /* 可调整-位置：播放器水平位置 */
+  --player-top: calc(100cqh - var(--ui-chrome-bottom)); /* 可调整-位置：与侧栏底边对齐 */
+  --player-width: 30cqw;              /* 可调整-尺寸：播放器宽 */
+  --player-font-size: 2.5cqh;           /* 可调整-尺寸：控件字号 */
+  --player-gap: 1.2cqh;                 /* 可调整-尺寸：控件行间距 */
+  --player-padding: 2.2cqh 1.8cqw;      /* 可调整-尺寸：内边距 */
+}
+
+/* ------------------------------------------------------------------ */
+/* 全屏居中层：与 .stage 同尺寸，供内部 cqw/cqh 坐标对齐               */
+/* ------------------------------------------------------------------ */
+#player {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+#player.is-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.player-stage-mirror {
+  position: relative;
+  width: min(100vw, calc(100vh * 1920 / 1080));
+  aspect-ratio: 1920 / 1080;
+  container-type: size;
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* L 形白线框壳（底边开口，延伸出画面）                                 */
+/* ------------------------------------------------------------------ */
+.player-shell {
+  position: absolute;
+  left: var(--player-left);
+  top: var(--player-top);
+  width: var(--player-width);
+  bottom: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--color-white);
+  border-bottom: none;
+  padding: var(--player-padding);
+  pointer-events: auto;
+  color: var(--color-white);
+  font-family: var(--font-gothic);
+  font-size: var(--player-font-size);
+}
+
+/* ------------------------------------------------------------------ */
+/* 控件区布局                                                           */
+/* ------------------------------------------------------------------ */
+.player-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--player-gap);
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  gap: 1.2cqw;
+}
+
+.player-row--main {
+  justify-content: space-between;
+}
+
+.player-transport {
+  display: flex;
+  align-items: center;
+  gap: 0.6cqw;
+}
+
+.player-row--progress {
+  gap: 0.8cqw;
+}
+
+/* 音量符号按钮：点击展开/收起音量滑条 */
+.player-btn--volume {
+  min-width: auto;
+  padding: 0.4cqh 0.6cqw;
+  border: none;
+  font-size: calc(var(--player-font-size) * 1.15);
+  line-height: 1;
+}
+
+.player-btn--volume:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* 播放进度条（横条拖动 seek） */
+.player-progress {
+  flex: 1;
+  height: 0.35cqh;
+  min-height: 4px;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.player-progress:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.player-progress::-webkit-slider-runnable-track {
+  height: 0.35cqh;
+  min-height: 4px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid var(--color-white);
+  border-radius: 999px;
+}
+
+.player-progress::-moz-range-track {
+  height: 0.35cqh;
+  min-height: 4px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid var(--color-white);
+  border-radius: 999px;
+}
+
+.player-progress::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.2cqw;
+  min-width: 10px;
+  height: 1.2cqw;
+  min-height: 10px;
+  margin-top: calc((0.35cqh - 1.2cqw) / 2);
+  background: var(--color-white);
+  border: 1px solid var(--color-white);
+  border-radius: 50%;
+}
+
+.player-progress::-moz-range-thumb {
+  width: 1.2cqw;
+  min-width: 10px;
+  height: 1.2cqw;
+  min-height: 10px;
+  background: var(--color-white);
+  border: 1px solid var(--color-white);
+  border-radius: 50%;
+}
+
+/* 收起态音量面板：点击 🔊 后展开 */
+.player-volume-panel {
+  display: flex;
+  align-items: center;
+  padding-left: 0.2cqw;
+}
+
+.player-volume-panel[hidden] {
+  display: none;
+}
+
+.player-volume {
+  flex: 1;
+  height: 0.35cqh;
+  min-height: 4px;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.player-volume:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.player-volume::-webkit-slider-runnable-track {
+  height: 0.35cqh;
+  min-height: 4px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid var(--color-white);
+  border-radius: 999px;
+}
+
+.player-volume::-moz-range-track {
+  height: 0.35cqh;
+  min-height: 4px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid var(--color-white);
+  border-radius: 999px;
+}
+
+.player-volume::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.2cqw;
+  min-width: 10px;
+  height: 1.2cqw;
+  min-height: 10px;
+  margin-top: calc((0.35cqh - 1.2cqw) / 2);
+  background: var(--color-white);
+  border: 1px solid var(--color-white);
+  border-radius: 50%;
+}
+
+.player-volume::-moz-range-thumb {
+  width: 1.2cqw;
+  min-width: 10px;
+  height: 1.2cqw;
+  min-height: 10px;
+  background: var(--color-white);
+  border: 1px solid var(--color-white);
+  border-radius: 50%;
+}
+
+/* 播放/暂停、模式按钮：白字白框 */
+.player-btn {
+  border: 1px solid var(--color-white);
+  background: transparent;
+  color: var(--color-white);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: 1;
+  padding: 0.5cqh 1cqw;
+  cursor: pointer;
+  min-width: 3.5cqw;
+  text-align: center;
+}
+
+.player-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.player-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.player-btn--play {
+  font-size: calc(var(--player-font-size) * 1.1);
+  min-width: 4cqw;
+}
+
+.player-btn--prev,
+.player-btn--next {
+  min-width: 3cqw;
+  padding: 0.5cqh 0.6cqw;
+  font-size: calc(var(--player-font-size) * 0.95);
+}
+
+.player-btn--mode.is-active {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* 当前曲名 */
+.player-track-title {
+  margin: 0;
+  font-size: calc(var(--player-font-size) * 0.85);
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.9;
+}
+
+.player-shell.is-empty .player-track-title {
+  opacity: 0.45;
+}

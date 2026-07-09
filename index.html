@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 可调整-文字：浏览器标签页标题 -->
+  <title>Shop sells (almost) everything —— 曹安安 作品集</title>
+
+  <!-- ================= 全站样式：变量 → 基础层 → 共享 → 各子页面 ================= -->
+  <link rel="stylesheet" href="css/shared/variables.css" />
+  <link rel="stylesheet" href="css/shared/base.css" />
+  <link rel="stylesheet" href="css/shared/background.css" />
+  <link rel="stylesheet" href="css/shared/fonts.css" />
+  <link rel="stylesheet" href="css/shared/components.css" />
+  <link rel="stylesheet" href="css/shared/sidePanel.css" />
+  <link rel="stylesheet" href="css/shared/cartChrome.css" />
+  <link rel="stylesheet" href="css/shared/lightbox.css" />
+  <link rel="stylesheet" href="css/shared/player.css" />
+  <link rel="stylesheet" href="css/pages/home.css" />
+  <link rel="stylesheet" href="css/pages/landing.css" />
+  <link rel="stylesheet" href="css/pages/work.css" />
+</head>
+<body>
+  <!-- ================= 常驻背景层（最底层固定，永不参与动画）================= -->
+  <div class="bg-layer"></div>
+  <div class="bg-blobs"></div>
+
+  <!-- ================= 子页面 1：首页 Homepage（初始激活）================= -->
+  <section id="home" class="section is-active">
+    <!-- 装饰边框：全屏 border-image 九宫格 9-slice（可调整-素材/切线见 home.css） -->
+    <div class="home-frame" aria-hidden="true"></div>
+
+    <!-- 手写 Shop（所有文字最下层，可调整-素材：换 SHOP.png） -->
+    <img class="home-shop" src="asset/pages/home/SHOP.png" alt="Shop" />
+
+    <!-- 左侧：红色爆炸贴纸自拍（可调整-素材：selfie 帧；src 由 JS 循环替换） -->
+    <img class="home-selfie" src="asset/shared/sticker/selfie/1.png" alt="曹安安 自拍" />
+
+    <!-- 右上：sells (almost) everything（可调整-文字：标语内容） -->
+    <div class="home-tagline">
+      <span class="t-sells">sells</span>
+      <span class="t-everything"><span class="t-almost">(almost)</span> everything</span>
+    </div>
+
+    <!-- 右下：绿色信息块（可调整-文字：以下全部文案） -->
+    <div class="home-info">
+      <!-- 左列：姓名 + 时间线 -->
+      <div class="info-col">
+        <div class="info-name-row">
+          <div class="info-name">
+            <div class="name-cn">曹　安安</div>              <!-- 可调整-文字：中文名 -->
+            <div class="name-kana">ソウ　アンアン</div>       <!-- 可调整-文字：假名 -->
+          </div>
+          <div class="info-role">CGデザイナー<br>志望</div>
+        </div>
+        <ul class="info-timeline">
+          <!-- 可调整-文字：经历时间线 -->
+          <li><span class="timeline-year">1998年12月</span><span class="timeline-desc">中国広東省　生まれ</span></li>
+          <li><span class="timeline-year">2021</span><span class="timeline-desc">(台湾)世新大学卒業</span></li>
+          <li><span class="timeline-year">2026</span><span class="timeline-desc">（日本）立命館大学大学院<br>映像研究科  卒業予定</span></li>
+        </ul>
+      </div>
+
+      <!-- 右列：学習意欲 / チームワーク / なんでも屋（整列线框包裹） -->
+      <div class="info-col info-col--right">
+        <div class="info-panel">
+          <div class="info-heading">・学習意欲</div>
+          <div class="info-sub">  2d / 3d / music / web / vibe coding(ai利用)</div>
+          <div class="info-heading">・チームワーク</div>
+          <div class="info-sub">  indie / jam / school</div>
+          <div class="info-push-point">推しポイント</div>
+          <div class="info-note">「なんでも屋」と言われています</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NEW!!（可调整-文字：文案；后续可接帧动画） -->
+    <div class="home-new">NEW!!</div>
+
+    <!-- 向下箭头：进入「进入网页」的入口触发（data-goto 指定目标 section） -->
+    <button class="home-arrow" type="button" data-goto="landing" aria-label="进入网页">&#x2193;</button>
+  </section>
+
+  <!-- ================= 子页面 2：进入网页 Landing / 作品总览 ================= -->
+  <!-- 布局对照 references/进入网页.png；全部元素挂在 16:9 定比舞台 .stage 上 -->
+  <section id="landing" class="section">
+    <div class="stage landing-stage">
+      <!-- 向上箭头：返回首页的入口触发（data-goto 指定目标 section） -->
+      <button class="landing-arrow" type="button" data-goto="home" aria-label="返回首页">&#x2191;</button>
+
+      <!-- 左上：店主头像（缩小爆炸贴纸；过渡 A 中由首页自拍飞入落位；src 由 JS 帧序列循环替换） -->
+      <img class="landing-avatar" src="asset/shared/sticker/selfie/1.png" alt="店主头像" />
+
+      <!-- 头像旁：RPG 绿色对话框（打字机由 dialog.js 后续接管；现阶段静态展示完整台词） -->
+      <div class="landing-dialog">
+        <p class="dialog-text">
+          いらっしゃいませ！ご来店ありがとうございます。<br />
+          私のポートフォリオです。
+        </p>
+        <span class="dialog-next" aria-hidden="true">&#x25BD;</span>
+      </div>
+
+      <!-- 主白框面板（纯线框，内容元素为舞台同级绝对定位，便于逐个调参） -->
+      <div class="landing-panel" aria-hidden="true"></div>
+
+      <!-- 左：Main 主推作品大展示位（点击进作品；图片由 JS 按 works 数据填充） -->
+      <button class="landing-main" type="button" data-goto="work">
+        <img class="landing-main-img" src="asset/works/Sample/Image_Sample1.png" alt="主推作品" />
+      </button>
+      <!-- 绿色 Main 字（Georgia Italic，压在展示位下缘） -->
+      <div class="landing-main-script" aria-hidden="true">Main</div> <!-- 可调整-文字 -->
+
+      <!-- 右：作品棚（3D / マテリアル＆シェーダー / 2D 标签 + 缩略图，右对齐；超出视口可滚动） -->
+      <div class="landing-shelf-viewport">
+        <div class="landing-shelf-content">
+          <div class="landing-shelf-section">
+            <div class="landing-cat-label">3D(ほか)</div> <!-- 可调整-文字 -->
+            <div class="landing-grid landing-grid--3d"></div>
+          </div>
+          <div class="landing-shelf-section">
+            <div class="landing-cat-label">マテリアル＆シェーダー</div> <!-- 可调整-文字 -->
+            <div class="landing-grid landing-grid--ms"></div>
+          </div>
+          <div class="landing-shelf-section">
+            <div class="landing-cat-label">2D (ほか)</div> <!-- 可调整-文字 -->
+            <div class="landing-grid landing-grid--2d"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右缘：拖拽滑块（滚动作品棚） -->
+      <div class="landing-scrollbar" aria-label="作品棚滚动">
+        <button class="scrollbar-thumb" type="button" aria-label="拖动浏览作品棚"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 子页面 3：进入作品 Work Detail ================= -->
+  <section id="work" class="section">
+    <div class="stage work-stage">
+      <!-- 返回作品总览 -->
+      <button class="work-back" type="button" data-goto="landing" aria-label="返回作品总览">&#x2190;</button>
+
+      <!-- 白描边主框架 -->
+      <div class="work-panel panel-white" aria-hidden="true"></div>
+
+      <!-- 左上：作品标题（JS 填充） -->
+      <h1 class="work-title"></h1>
+
+      <!-- 左大白框：主展示 -->
+      <div class="work-main panel-white"></div>
+
+      <!-- 左下：用时 + 加购（Unicode UI） -->
+      <div class="work-hours-bar">
+        <span class="work-hours-value" aria-hidden="true"></span>
+        <button class="work-cart-add" type="button" aria-label="加入购物车">
+          <span class="work-cart-add-icon" aria-hidden="true">
+            <svg class="ui-side-dock__icon work-cart-add-svg" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 7h2l2 10h10l2-8H8" />
+              <circle cx="10" cy="20" r="1.25" />
+              <circle cx="17" cy="20" r="1.25" />
+              <path d="M19 5v4M21 7h-4" />
+            </svg>
+          </span>
+          <span class="work-cart-add-done" aria-hidden="true">&#x2713;</span>
+        </button>
+      </div>
+
+      <!-- 右上橙框：细节视频 -->
+      <div class="work-detail frame-orange"></div>
+
+      <!-- 右侧：说明文章（可滚动视口） -->
+      <div class="work-desc-viewport">
+        <div class="work-desc"></div>
+      </div>
+
+      <!-- 右缘：拖拽滑块（与 landing 同款） -->
+      <div class="work-scrollbar" aria-label="说明区滚动">
+        <button class="work-scrollbar-thumb" type="button" aria-label="拖动浏览说明"></button>
+      </div>
+
+      <!-- 右下橙框：turntable / video3 -->
+      <div class="work-turntable frame-orange"></div>
+
+      <!-- 左下：模型下载链接 -->
+      <a class="work-download is-hidden" href="#" target="_blank" rel="noopener">modlesDownloadLink</a>
+
+      <!-- 页面最底部「下一个」 -->
+      <button class="work-next is-hidden" type="button" data-goto="work">下一个</button>
+    </div>
+  </section>
+
+  <!-- ================= 常驻购物车侧栏（landing / work 跨页，镜像舞台坐标）================= -->
+  <div id="cart-chrome" class="is-page-hidden" data-page="">
+    <div class="cart-chrome-mirror">
+      <div class="ui-side-dock cart-dock is-hidden">
+        <button class="ui-side-dock__toggle cart-toggle" type="button" aria-label="购物车">
+          <svg class="ui-side-dock__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h2l2 10h10l2-8H8" />
+            <circle cx="10" cy="20" r="1.25" />
+            <circle cx="17" cy="20" r="1.25" />
+          </svg>
+          <span class="ui-side-dock__badge cart-badge"></span>
+        </button>
+      </div>
+      <div class="ui-side-sheet cart-sheet is-hidden" aria-hidden="true">
+        <ul class="ui-side-sheet__list cart-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 常驻音乐播放器（左下角 L 形线框，跨 section 不卸载）================= -->
+  <div id="player" class="is-hidden">
+    <div class="player-stage-mirror">
+      <div class="player-shell">
+        <audio class="player-audio" preload="metadata"></audio>
+        <div class="player-controls">
+          <div class="player-row player-row--main">
+            <div class="player-transport">
+              <button type="button" class="player-btn player-btn--prev" aria-label="上一首" disabled>&#x23EE;</button>
+              <button type="button" class="player-btn player-btn--play" aria-label="播放" disabled>&#x25B6;</button>
+              <button type="button" class="player-btn player-btn--next" aria-label="下一首" disabled>&#x23ED;</button>
+            </div>
+            <button type="button" class="player-btn player-btn--mode is-active" aria-label="列表循环" disabled>LOOP</button>
+          </div>
+          <div class="player-row player-row--progress">
+            <button type="button" class="player-btn player-btn--volume" aria-label="音量" aria-expanded="false" disabled>&#x1F50A;</button>
+            <input type="range" class="player-progress" min="0" max="1000" value="0" aria-label="播放进度" disabled />
+          </div>
+          <div class="player-volume-panel" hidden>
+            <input type="range" class="player-volume" min="0" max="100" value="80" aria-label="音量" disabled />
+          </div>
+          <p class="player-track-title">NO TRACK</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 视频 Lightbox（跨 section 常驻）================= -->
+  <div id="lightbox" class="lightbox is-hidden" aria-hidden="true">
+    <div class="lightbox-backdrop"></div>
+    <div class="lightbox-stage"></div>
+  </div>
+
+  <!-- ================= SPA 入口脚本 ================= -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

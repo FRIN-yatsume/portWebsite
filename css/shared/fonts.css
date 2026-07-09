@@ -1,0 +1,63 @@
+/* ==========================================================================
+   字体声明
+   —— 按 SKILL 字体规范接入 asset/shared/font/ 下的字体文件
+   —— Shop / Main 手写字仍用 PNG 图片，不走 CSS 字体
+   —— 检索标签：可调整-文字（字体文件）/ 可调整-素材（字体路径）
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ */
+/* Gothic 家族：Yu Gothic（绿色 UI / 说明 / 首页信息文字，靠字重分层级） */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "YuGothic";
+  src: url("../../asset/shared/font/YuGothL.ttc") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "YuGothic";
+  src: url("../../asset/shared/font/YuGothR.ttc") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "YuGothic";
+  src: url("../../asset/shared/font/YuGothM.ttc") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "YuGothic";
+  src: url("../../asset/shared/font/YuGothB.ttc") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------ */
+/* NEW!!：Calibri Bold Italic（可调整-文字 / 可调整-素材）              */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Calibri";
+  src: url("../../asset/shared/font/calibriz.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ------------------------------------------------------------------ */
+/* sells (almost) everything：Georgia Italic（可调整-文字 / 可调整-素材） */
+/* ------------------------------------------------------------------ */
+@font-face {
+  font-family: "Georgia";
+  src: url("../../asset/shared/font/georgiai.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}

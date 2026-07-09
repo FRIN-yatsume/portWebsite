@@ -1,0 +1,61 @@
+/* ==========================================================================
+   视频 Lightbox（橙框细节视频点击放大）
+   —— 自定义遮罩 + 居中约 70% 宽，非原生全屏
+   —— 检索标签：可调整-尺寸（放大比例）/ 可调整-速度（开合时长）/ 可调整-颜色
+   ========================================================================== */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  /* 可调整-速度：lightbox 开/合时长 */
+  transition:
+    opacity 0.3s ease,
+    visibility 0s linear 0.3s;
+}
+
+.lightbox.is-open {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease;
+}
+
+/* 后方压暗遮罩 */
+.lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55); /* 可调整-颜色：遮罩暗度 */
+  cursor: pointer;
+}
+
+/* 居中放大舞台（约 70% 视口宽） */
+.lightbox-stage {
+  position: relative;
+  z-index: 1;
+  width: min(70vw, 90vh * 16 / 9); /* 可调整-尺寸：放大宽度占比 */
+  max-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: scale(0.92);
+  transition: transform 0.3s ease; /* 可调整-速度：弹出缩放 */
+}
+
+.lightbox.is-open .lightbox-stage {
+  transform: scale(1);
+}
+
+.lightbox-stage video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  object-fit: contain;
+}

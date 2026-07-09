@@ -1,0 +1,424 @@
+/* ==========================================================================
+   进入作品 Work Detail 专属样式
+   —— ⚠️ 本页不出现店主头像
+   —— 布局按素材数量自适应，不写死框数
+   —— 检索标签：可调整-位置 / 可调整-尺寸 / 可调整-颜色 / 可调整-文字
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ */
+/* 进入作品集中调参区                                                   */
+/* ------------------------------------------------------------------ */
+#work {
+  /* 可调整-位置 / 可调整-尺寸：白描边主框架 */
+  --work-panel-left: 3.4cqw;
+  --work-panel-top: 8cqh;
+  --work-panel-width: 95.5cqw;
+  --work-panel-height: 90cqh;
+
+  /* 可调整-位置 / 可调整-尺寸：作品标题 */
+  --work-title-left: 5cqw;
+  --work-title-top: 11cqh;
+  --work-title-size: 4.5cqh;
+
+  /* 可调整-位置 / 可调整-尺寸：左大白框主展示 */
+  --work-main-left: 5.5cqw;
+  --work-main-top: 17cqh;
+  --work-main-width: 45cqw;
+  --work-main-height: 56cqh;
+
+  /* 可调整-位置 / 可调整-尺寸：右上橙框细节视频 */
+  --work-detail-left: 52cqw;
+  --work-detail-top: 16cqh;
+  --work-detail-width: 18cqw;
+  --work-detail-height: 18cqh;
+
+  /* 可调整-位置 / 可调整-尺寸：右侧说明区整块（文字 + scrollbar，四边相对白框留白） */
+  --work-desc-inset-top: 6cqh;        /* 整块顶 → 白框顶 内距 */
+  --work-desc-inset-bottom: 6cqh;      /* 整块底 → 白框底 内距 */
+  --work-desc-inset-left: 4cqw;     /* 整块左 → 主视频右缘 间距 */
+  --work-desc-inset-right: 2.5cqw;    /* 整块右（scrollbar 右缘）→ 白框右缘 内距 */
+  --work-desc-top: calc(var(--work-panel-top) + var(--work-desc-inset-top));
+  --work-desc-height: calc(
+    var(--work-panel-height) - var(--work-desc-inset-top) - var(--work-desc-inset-bottom)
+  );
+  --work-desc-left: calc(
+    var(--work-main-left) + var(--work-main-width) + var(--work-desc-inset-left)
+  );
+  --work-scrollbar-right: calc(
+    100cqw - var(--work-panel-left) - var(--work-panel-width) + var(--work-desc-inset-right)
+  );
+  --work-scrollbar-width: 1.5cqw;
+  --work-desc-scrollbar-gap: 1.2cqw; /* 可调整-位置：文字框右缘 → scrollbar 左缘间距 */
+  --work-desc-width: calc(
+    var(--work-panel-left) + var(--work-panel-width) - var(--work-desc-left) -
+      var(--work-desc-inset-right) - var(--work-scrollbar-width) -
+      var(--work-desc-scrollbar-gap)
+  );
+  --work-desc-font-size: 2.2cqh;
+  --work-desc-video-width: 100%;
+
+  /* 可调整-尺寸：滑块内边距（thumb 在轨道内滑动） */
+  --work-scrollbar-pad-y: 0.3cqh;
+  --work-scrollbar-pad-x: 0.15cqw;
+  --work-scrollbar-thumb-min: 12px;
+  --work-scrollbar-thumb-idle: rgba(255, 255, 255, 0.35);
+  --work-scrollbar-track-idle: rgba(255, 255, 255, 0.45);
+
+  /* 可调整-位置 / 可调整-尺寸：右下橙框 turntable / video3 */
+  --work-turntable-left: 52cqw;
+  --work-turntable-top: 60cqh;
+  --work-turntable-width: 18cqw;
+  --work-turntable-height: 18cqh;
+
+  /* 可调整-位置 / 可调整-尺寸：模型下载链接 */
+  --work-download-left: 38cqw;
+  --work-download-top: 82cqh;
+  --work-download-size: 2cqh;
+
+  /* 可调整-位置 / 可调整-尺寸：返回键（左上向左箭头） */
+  --work-back-left: 5cqw;
+  --work-back-top: 2cqh;
+  --work-back-size: 4cqw;
+
+  /* 可调整-位置 / 可调整-尺寸：底部「下一个」 */
+  --work-next-bottom: 1.5cqh;
+  --work-next-size: 2.2cqh;
+
+  /* 可调整-位置 / 可调整-尺寸：红框1 用时 + 加购（主视频下方） */
+  --work-hours-gap: 1.5cqh;
+  --work-hours-top: calc(var(--work-main-top) + var(--work-main-height) + var(--work-hours-gap));
+  --work-hours-left: var(--work-main-left);
+  --work-hours-size: 3.2cqh;
+  --work-cart-add-size: 4.5cqh;
+}
+
+/* ------------------------------------------------------------------ */
+/* 作品舞台                                                           */
+/* ------------------------------------------------------------------ */
+/* 通用隐藏类                                                           */
+/* ------------------------------------------------------------------ */
+.is-hidden {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* 白描边主框架（与进入网页 landing-panel 风格一致）                     */
+/* ------------------------------------------------------------------ */
+.work-panel {
+  position: absolute;
+  left: var(--work-panel-left);
+  top: var(--work-panel-top);
+  width: var(--work-panel-width);
+  height: var(--work-panel-height);
+  z-index: 1;
+  border: 1px solid var(--color-white);
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* 左上：作品标题（绿字）                                               */
+/* ------------------------------------------------------------------ */
+.work-title {
+  position: absolute;
+  left: var(--work-title-left);
+  top: var(--work-title-top);
+  z-index: 3;
+  margin: 0;
+  font-family: var(--font-gothic);
+  font-weight: 700;
+  font-size: var(--work-title-size);
+  color: var(--color-green-line);
+}
+
+/* ------------------------------------------------------------------ */
+/* 左大白框：主展示区                                                   */
+/* ------------------------------------------------------------------ */
+.work-main {
+  position: absolute;
+  left: var(--work-main-left);
+  top: var(--work-main-top);
+  width: var(--work-main-width);
+  height: var(--work-main-height);
+  z-index: 2;
+  overflow: hidden;
+}
+
+.work-main-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ------------------------------------------------------------------ */
+/* 右上橙框：细节视频                                                   */
+/* ------------------------------------------------------------------ */
+.work-detail {
+  position: absolute;
+  left: var(--work-detail-left);
+  top: var(--work-detail-top);
+  width: var(--work-detail-width);
+  height: var(--work-detail-height);
+  z-index: 2;
+  overflow: hidden;
+}
+
+.work-detail-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ------------------------------------------------------------------ */
+/* 右侧：说明区视口（JS translateY 滚动，隐藏原生滚动条）             */
+/* ------------------------------------------------------------------ */
+.work-desc-viewport {
+  position: absolute;
+  left: var(--work-desc-left);
+  top: var(--work-desc-top);
+  width: var(--work-desc-width);
+  height: var(--work-desc-height);
+  z-index: 2;
+  overflow: hidden;
+}
+
+.work-desc {
+  width: 100%;
+  font-size: var(--work-desc-font-size);
+  line-height: 1.5;
+  color: var(--color-work-text);
+}
+
+.work-desc-p {
+  margin: 0 0 1.2cqh;
+  color: var(--color-work-text);
+}
+
+.work-desc-img {
+  display: block;
+  max-width: 100%;
+  margin: 0 0 1.2cqh;
+}
+
+/* 说明区内：编号视频（橙框小窗，保持原始比例） */
+.work-desc-video {
+  width: var(--work-desc-video-width);
+  height: auto;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 1.2cqh;
+  cursor: pointer;
+}
+
+.work-desc-video-media {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ------------------------------------------------------------------ */
+/* 右缘：拖拽滑块（与 landing 同款圆角轨道 + 白色滑块）                 */
+/* ------------------------------------------------------------------ */
+.work-scrollbar {
+  position: absolute;
+  right: var(--work-scrollbar-right);
+  top: var(--work-desc-top);
+  width: var(--work-scrollbar-width);
+  height: var(--work-desc-height);
+  z-index: 3;
+  box-sizing: border-box;
+  border: 1px solid var(--color-white);
+  border-radius: 999px;
+  padding: var(--work-scrollbar-pad-y) var(--work-scrollbar-pad-x);
+}
+
+.work-scrollbar-thumb {
+  position: absolute;
+  left: var(--work-scrollbar-pad-x);
+  right: var(--work-scrollbar-pad-x);
+  top: var(--work-scrollbar-pad-y);
+  border: none;
+  padding: 0;
+  background: var(--color-white);
+  border-radius: 999px;
+  cursor: grab;
+  touch-action: none;
+  transition: background 0.2s ease;
+}
+
+.work-scrollbar-thumb:active {
+  cursor: grabbing;
+}
+
+.work-scrollbar.is-idle {
+  border-color: var(--work-scrollbar-track-idle);
+}
+
+.work-scrollbar.is-idle .work-scrollbar-thumb {
+  background: var(--work-scrollbar-thumb-idle);
+  pointer-events: none;
+  cursor: default;
+}
+
+/* ------------------------------------------------------------------ */
+/* 右下橙框：turntable / video3                                         */
+/* ------------------------------------------------------------------ */
+.work-turntable {
+  position: absolute;
+  left: var(--work-turntable-left);
+  top: var(--work-turntable-top);
+  width: var(--work-turntable-width);
+  height: var(--work-turntable-height);
+  z-index: 2;
+  overflow: hidden;
+}
+
+.work-turntable-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ------------------------------------------------------------------ */
+/* 左下：模型下载链接                                                   */
+/* ------------------------------------------------------------------ */
+.work-download {
+  position: absolute;
+  left: var(--work-download-left);
+  top: var(--work-download-top);
+  z-index: 3;
+  font-size: var(--work-download-size);
+  color: var(--color-work-text);
+}
+
+/* ------------------------------------------------------------------ */
+/* 左上：向左箭头（返回作品总览，与 landing 向上箭头同款跳动）           */
+/* ------------------------------------------------------------------ */
+.work-back {
+  position: absolute;
+  left: var(--work-back-left);
+  top: var(--work-back-top);
+  z-index: 4;
+  width: var(--work-back-size);
+  height: var(--work-back-size);
+  border: none;
+  background: transparent;
+  color: var(--color-green-line);         /* 可调整-颜色：箭头颜色 */
+  font-size: calc(var(--work-back-size) * 0.8);
+  line-height: 1;
+  cursor: pointer;
+  /* 可调整-速度：箭头跳动周期（1.5s） */
+  animation: work-back-bob 1.5s ease-in-out infinite;
+}
+
+.work-back:hover {
+  filter: brightness(1.2);
+}
+
+/* 箭头向左轻微跳动，提示可点 */
+@keyframes work-back-bob {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-2cqw); } /* 可调整-尺寸：跳动幅度 */
+}
+
+/* ------------------------------------------------------------------ */
+/* 页面最底部「下一个」入口                                             */
+/* ------------------------------------------------------------------ */
+.work-next {
+  position: absolute;
+  left: 50%;
+  bottom: var(--work-next-bottom);
+  transform: translateX(-50%);
+  z-index: 4;
+  border: none;
+  background: transparent;
+  color: var(--color-work-text);
+  font-family: var(--font-gothic);
+  font-size: var(--work-next-size);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.work-next:hover {
+  filter: brightness(1.2);
+}
+
+/* ------------------------------------------------------------------ */
+/* 左下：用时 + 加购（Unicode UI，红框1）                               */
+/* ------------------------------------------------------------------ */
+.work-hours-bar {
+  position: absolute;
+  left: var(--work-hours-left);
+  top: var(--work-hours-top);
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 1.5cqw;
+}
+
+.work-hours-value {
+  font-family: var(--font-gothic);
+  font-size: var(--work-hours-size);
+  font-weight: 700;
+  color: var(--color-work-text);
+  line-height: 1;
+}
+
+.work-cart-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--work-cart-add-size);
+  height: var(--work-cart-add-size);
+  padding: 0;
+  border: 1px solid var(--color-white);
+  border-radius: 0.8cqw;
+  background: transparent;
+  color: var(--color-work-text);
+  line-height: 1;
+  cursor: pointer;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.work-cart-add-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70%;
+  height: 70%;
+}
+
+.work-cart-add-svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+}
+
+.work-cart-add:hover:not(.is-in-cart) {
+  filter: brightness(1.2);
+}
+
+.work-cart-add-done {
+  display: none;
+}
+
+.work-cart-add.is-in-cart {
+  opacity: 0.55;
+  pointer-events: none;
+  cursor: default;
+}
+
+.work-cart-add.is-in-cart .work-cart-add-icon {
+  display: none;
+}
+
+.work-cart-add.is-in-cart .work-cart-add-done {
+  display: block;
+  font-size: calc(var(--work-cart-add-size) * 0.5);
+}
