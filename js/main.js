@@ -12,7 +12,7 @@ import {
   playTransitionAReverse,
   isTransitioning,
 } from "./modules/transition.js";
-import "./modules/dialog.js";
+import { initDialog } from "./modules/dialog.js";
 import "./modules/player.js";
 import "./modules/turntable.js";
 import { initLightbox } from "./modules/lightbox.js";
@@ -550,6 +550,7 @@ function init() {
   bindWorkDescScroll();
   initWorkCart();
   initLightbox();
+  initDialog();
   document.addEventListener("landing:activate", resumeLandingMainVideo);
   document.addEventListener("landing:deactivate", pauseLandingMainVideo);
   // TODO: 装配常驻播放器
