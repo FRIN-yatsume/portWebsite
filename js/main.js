@@ -244,16 +244,20 @@ function setupLandingMainDisplay(mainWork) {
 }
 
 // ------------------------------------------------------------------
-// 缩略图 hover 视频轮播 + 项目名叠层 + 暗色背景
+// 缩略图 hover 预览（视频轮播 / PNG 轮播）+ 项目名叠层 + 暗色背景
 // ------------------------------------------------------------------
+const THUMB_IMAGE_INTERVAL_MS = 2500;
+
+function getThumbPreviewImages(work) {
+  const thumbSrc = workThumbSrc(work);
+  return (work.images?.filter(Boolean) ?? []).filter((src) => src !== thumbSrc);
+}
+
 function bindThumbPreview(btn, work) {
   const videos = work.videos?.filter(Boolean);
-  if (!videos?.length) return;
+  const previewImages = getThumbPreviewImages(work);
 
-  const video = document.createElement("video");
-  video.className = "landing-thumb-preview";
-  video.muted = true;
-  video.playsInline = true;
+  if (!videos?.length && !previewImages.length) return;
 
   const dim = document.createElement("div");
   dim.className = "landing-thumb-dim";
@@ -263,36 +267,77 @@ function bindThumbPreview(btn, work) {
   label.className = "landing-thumb-label";
   label.textContent = work.projectName;
 
-  btn.appendChild(video);
   btn.appendChild(dim);
   btn.appendChild(label);
 
-  let videoIndex = 0;
+  if (videos?.length) {
+    const video = document.createElement("video");
+    video.className = "landing-thumb-preview";
+    video.muted = true;
+    video.playsInline = true;
+    btn.insertBefore(video, dim);
 
-  const playCurrent = () => {
-    video.src = videos[videoIndex];
-    video.currentTime = 0;
-    video.play().catch(() => {});
+    let videoIndex = 0;
+
+    const playCurrent = () => {
+      video.src = videos[videoIndex];
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    };
+
+    const onEnded = () => {
+      videoIndex = (videoIndex + 1) % videos.length;
+      playCurrent();
+    };
+
+    btn.addEventListener("mouseenter", () => {
+      btn.classList.add("is-previewing");
+      videoIndex = 0;
+      video.addEventListener("ended", onEnded);
+      playCurrent();
+    });
+
+    btn.addEventListener("mouseleave", () => {
+      btn.classList.remove("is-previewing");
+      video.removeEventListener("ended", onEnded);
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    });
+    return;
+  }
+
+  const previewImg = document.createElement("img");
+  previewImg.className = "landing-thumb-preview";
+  previewImg.alt = "";
+  btn.insertBefore(previewImg, dim);
+
+  let imageIndex = 0;
+  let imageTimer = null;
+
+  const showCurrentImage = () => {
+    previewImg.src = previewImages[imageIndex];
   };
 
-  const onEnded = () => {
-    videoIndex = (videoIndex + 1) % videos.length;
-    playCurrent();
+  const advanceImage = () => {
+    imageIndex = (imageIndex + 1) % previewImages.length;
+    showCurrentImage();
   };
 
   btn.addEventListener("mouseenter", () => {
     btn.classList.add("is-previewing");
-    videoIndex = 0;
-    video.addEventListener("ended", onEnded);
-    playCurrent();
+    imageIndex = 0;
+    showCurrentImage();
+    imageTimer = window.setInterval(advanceImage, THUMB_IMAGE_INTERVAL_MS);
   });
 
   btn.addEventListener("mouseleave", () => {
     btn.classList.remove("is-previewing");
-    video.removeEventListener("ended", onEnded);
-    video.pause();
-    video.removeAttribute("src");
-    video.load();
+    if (imageTimer !== null) {
+      window.clearInterval(imageTimer);
+      imageTimer = null;
+    }
+    previewImg.removeAttribute("src");
   });
 }
 

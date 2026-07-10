@@ -11,7 +11,7 @@
  * @property {string}   id            唯一 ID（过渡动画用它定位网格槽位）
  * @property {string}   projectName   项目名（驼峰截断），用于拼素材文件名
  * @property {"3D"|"CODE"|"2D"|"INDIE"} category  决定进哪个网格区（CODE = コーディングしたもの，INDIE = 協力したインディーゲーム）
- * @property {number}   order         我安排的顺序（全站一条线），底部「下一个」按此递增
+ * @property {number}   order         按货架浏览顺序（全站一条线），底部 ↓ 下一作品按此递增
  * @property {string}   title         作品页左上标题
  * @property {string}   [thumb]       缩略图（默认取 Image_(项目名)1.png，可覆盖）
  * @property {string[]} images        编号图片；说明区 {{image:N}}；[0] = 封面/缩略图
@@ -30,10 +30,10 @@ export const works = [
   // ------------------------------------------------------------------
   {
     id: "work_main",
-    projectName: "main",
+    projectName: "your trip",
     category: "3D",
     order: 1,
-    title: "· (作品名)",
+    title: "· your trip",
     thumb: "asset/works/1MAIN/main_1image.JPG",
     images: [
       "asset/works/1MAIN/main_1image.JPG",
@@ -54,7 +54,7 @@ export const works = [
     turntable: [],
     descriptionMd: "asset/works/1MAIN/main.md",
     downloadUrl: "",
-    hours: 48,
+    hours: 300,
   },
   // ------------------------------------------------------------------
   // School —— Back Room Maze（3D 作品）
@@ -91,7 +91,7 @@ export const works = [
     id: "work_2d_concept_art",
     projectName: "2DConceptArt",
     category: "2D",
-    order: 3,
+    order: 6,
     title: "· (作品名)",
     thumb: "asset/works/2D/2DConceptArt/concept_1image.jpg",
     images: [
@@ -118,7 +118,7 @@ export const works = [
     id: "work_2d_character_design",
     projectName: "2DcharacterDesign",
     category: "2D",
-    order: 4,
+    order: 7,
     title: "· (作品名)",
     thumb: "asset/works/2D/2DcharacterDesign/2dcharacter_1image .png",
     images: [
@@ -144,7 +144,7 @@ export const works = [
     id: "work_2d_illus",
     projectName: "2Dイラスト",
     category: "2D",
-    order: 5,
+    order: 8,
     title: "· (作品名)",
     thumb: "asset/works/2D/2Dイラスト/illus1.png",
     images: [
@@ -159,14 +159,34 @@ export const works = [
     hours: 24,
   },
   // ------------------------------------------------------------------
-  // Web —— コーディングしたもの
+  // Practice —— 2D (ほか)
+  // ------------------------------------------------------------------
+  {
+    id: "work_2d_practice",
+    projectName: "practice",
+    category: "2D",
+    order: 9,
+    title: "· practice",
+    thumb: "asset/works/2D/デッサンを含むほか/practice_1image.png",
+    images: [
+      "asset/works/2D/デッサンを含むほか/practice_1image.png",
+      "asset/works/2D/デッサンを含むほか/practice_2image.png",
+    ],
+    videos: [],
+    turntable: [],
+    descriptionMd: "asset/works/2D/デッサンを含むほか/practice.md",
+    downloadUrl: "",
+    hours: 24,
+  },
+  // ------------------------------------------------------------------
+  // Printed —— コーディングしたもの
   // ------------------------------------------------------------------
   {
     id: "work_2d_web",
-    projectName: "web",
+    projectName: "printed",
     category: "CODE",
-    order: 6,
-    title: "· (作品名)",
+    order: 3,
+    title: "· printed",
     thumb: "asset/works/コーディングしたもの/web/scriptMine_1image.png",
     images: [
       "asset/works/コーディングしたもの/web/scriptMine_1image.png",
@@ -191,16 +211,21 @@ export const works = [
   // ------------------------------------------------------------------
   {
     id: "work_shader_crt",
-    projectName: "マテリアル＆シェーダー",
+    projectName: "crt shader",
     category: "CODE",
-    order: 7,
-    title: "· (作品名)",
-    images: [],
+    order: 4,
+    title: "· crt shader",
+    thumb: "asset/works/コーディングしたもの/マテリアル＆シェーダー/material_1image.png",
+    images: [
+      "asset/works/コーディングしたもの/マテリアル＆シェーダー/material_1image.png",
+      "asset/works/コーディングしたもの/マテリアル＆シェーダー/material_2image.png",
+      "asset/works/コーディングしたもの/マテリアル＆シェーダー/material_3image.png",
+    ],
     videos: [
-      "asset/works/コーディングしたもの/マテリアル＆シェーダー/CRT.mp4",
+      "asset/works/コーディングしたもの/マテリアル＆シェーダー/material_1video.mp4",
     ],
     mainVideos: [
-      "asset/works/コーディングしたもの/マテリアル＆シェーダー/CRT.mp4",
+      "asset/works/コーディングしたもの/マテリアル＆シェーダー/material_1video.mp4",
     ],
     turntable: [],
     descriptionMd: "asset/works/コーディングしたもの/マテリアル＆シェーダー/マテリアル＆シェーダー.md",
@@ -212,10 +237,10 @@ export const works = [
   // ------------------------------------------------------------------
   {
     id: "work_indie",
-    projectName: "indie",
+    projectName: "indie game group work",
     category: "INDIE",
-    order: 8,
-    title: "· (作品名)",
+    order: 5,
+    title: "· indie game group work",
     thumb: "asset/works/協力したインディーゲーム/indie_1image.png",
     images: [
       "asset/works/協力したインディーゲーム/indie_1image.png",
@@ -231,6 +256,9 @@ export const works = [
       "asset/works/協力したインディーゲーム/indie_11image.png",
       "asset/works/協力したインディーゲーム/indie_12image.png",
       "asset/works/協力したインディーゲーム/indie_13image.png",
+      "asset/works/協力したインディーゲーム/indie_14image.png",
+      "asset/works/協力したインディーゲーム/indie_15image.png",
+      "asset/works/協力したインディーゲーム/indie_16image.png",
     ],
     videos: [],
     turntable: [],
