@@ -143,6 +143,10 @@
   overflow: hidden;
 }
 
+.work-main:has(> img.work-main-media) {
+  cursor: pointer;
+}
+
 .work-main-media {
   display: block;
   width: 100%;
@@ -195,6 +199,25 @@
   color: var(--color-work-text);
 }
 
+.work-desc-audio-toggle {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.work-desc-audio-toggle:hover {
+  color: var(--color-green-line);
+}
+
+.work-desc-audio-toggle.is-active {
+  color: var(--color-green-line);
+}
+
 .work-desc-img {
   display: block;
   max-width: 100%;
@@ -211,6 +234,7 @@
   align-items: center;
   justify-content: center;
   margin: 0 0 1.2cqh;
+  cursor: pointer;
 }
 
 .work-desc-image-media {
@@ -218,6 +242,29 @@
   width: 100%;
   height: auto;
   object-fit: contain;
+}
+
+/* 说明区内：并排图片行（同高底边对齐） */
+.work-desc-image-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1.2cqw;
+  align-items: flex-end;
+  width: 100%;
+  margin: 0 0 1.2cqh;
+}
+
+.work-desc-image-row .work-desc-image {
+  width: auto;
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+}
+
+.work-desc-image-row .work-desc-image-media {
+  max-height: 28cqh;
+  width: auto;
+  margin: 0 auto;
 }
 
 /* 说明区内：编号视频（橙框小窗，保持原始比例） */
@@ -238,6 +285,53 @@
   width: 100%;
   height: auto;
   object-fit: contain;
+}
+
+/* 说明区内：可展开代码块（默认收起） */
+.work-desc-code {
+  margin: 0 0 1.2cqh;
+  border: 2px solid var(--color-orange);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.work-desc-code-summary {
+  padding: 0.8cqh 1.2cqw;
+  font-family: var(--font-gothic);
+  font-weight: 700;
+  color: var(--color-orange);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.work-desc-code-summary::-webkit-details-marker {
+  display: none;
+}
+
+.work-desc-code-summary::before {
+  content: "▶ ";
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.work-desc-code[open] .work-desc-code-summary::before {
+  transform: rotate(90deg);
+}
+
+.work-desc-code-pre {
+  margin: 0;
+  padding: 1.2cqh 1.2cqw;
+  border-top: 1px solid var(--color-orange);
+  overflow-x: auto;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: calc(var(--work-desc-font-size) * 0.82);
+  line-height: 1.45;
+  color: var(--color-work-text);
+  white-space: pre;
+}
+
+.work-desc-code-body {
+  display: block;
 }
 
 /* ------------------------------------------------------------------ */
@@ -295,6 +389,10 @@
   height: var(--work-turntable-height);
   z-index: 2;
   overflow: hidden;
+}
+
+.work-turntable:has(img) {
+  cursor: pointer;
 }
 
 .work-turntable-media {

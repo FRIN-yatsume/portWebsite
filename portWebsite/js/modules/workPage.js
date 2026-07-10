@@ -264,6 +264,26 @@ async function renderDescriptionContent(work, container) {
         continue;
       }
 
+      // 并排图片行：{{row:8,9}}
+      const rowMatch = trimmed.match(/^\{\{row:([\d,\s]+)\}\}$/);
+      if (rowMatch) {
+        const indices = rowMatch[1]
+          .split(",")
+          .map((s) => parseInt(s.trim(), 10) - 1)
+          .filter((idx) => !Number.isNaN(idx) && images[idx]);
+
+        if (indices.length) {
+          const row = document.createElement("div");
+          row.className = "work-desc-image-row";
+          for (const idx of indices) {
+            row.appendChild(createDescImageFrame(images[idx], work.title));
+          }
+          container.appendChild(row);
+          rendered = true;
+        }
+        continue;
+      }
+
       // 图片块：{{image:N}}
       const imageMatch = trimmed.match(/^\{\{image:(\d+)\}\}$/);
       if (imageMatch) {

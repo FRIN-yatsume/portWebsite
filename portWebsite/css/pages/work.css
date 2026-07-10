@@ -244,6 +244,29 @@
   object-fit: contain;
 }
 
+/* 说明区内：并排图片行（同高底边对齐） */
+.work-desc-image-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1.2cqw;
+  align-items: flex-end;
+  width: 100%;
+  margin: 0 0 1.2cqh;
+}
+
+.work-desc-image-row .work-desc-image {
+  width: auto;
+  flex: 1 1 0;
+  min-width: 0;
+  margin: 0;
+}
+
+.work-desc-image-row .work-desc-image-media {
+  max-height: 28cqh;
+  width: auto;
+  margin: 0 auto;
+}
+
 /* 说明区内：编号视频（橙框小窗，保持原始比例） */
 .work-desc-video {
   width: var(--work-desc-video-width);

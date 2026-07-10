@@ -50,12 +50,27 @@
 
 .lightbox.is-open .lightbox-stage {
   transform: scale(1);
+  overflow: visible;
 }
 
-.lightbox-stage video {
+.lightbox-stage video,
+.lightbox-stage img {
   display: block;
   width: 100%;
   height: auto;
   max-height: 70vh;
   object-fit: contain;
+}
+
+.lightbox.is-open .lightbox-stage img {
+  transform-origin: center center;
+  user-select: none;
+}
+
+.lightbox.is-image-zoomed .lightbox-stage {
+  cursor: grab;
+}
+
+.lightbox.is-panning .lightbox-stage {
+  cursor: grabbing;
 }

@@ -89,10 +89,10 @@ export const works = [
   // ------------------------------------------------------------------
   {
     id: "work_2d_concept_art",
-    projectName: "2DConceptArt",
+    projectName: "KARMA",
     category: "2D",
     order: 6,
-    title: "· (作品名)",
+    title: "· KARMA",
     thumb: "asset/works/2D/2DConceptArt/concept_1image.jpg",
     images: [
       "asset/works/2D/2DConceptArt/concept_1image.jpg",
@@ -100,26 +100,28 @@ export const works = [
       "asset/works/2D/2DConceptArt/concept_3image.png",
       "asset/works/2D/2DConceptArt/concept_4image.png",
       "asset/works/2D/2DConceptArt/concept_5image.png",
+      "asset/works/2D/2DConceptArt/concept_6image.png",
       "asset/works/2D/2DConceptArt/concept_7image.png",
       "asset/works/2D/2DConceptArt/concept_8image .jpg",
       "asset/works/2D/2DConceptArt/concept_9image.jpg",
       "asset/works/2D/2DConceptArt/concept_10image.png",
+      "asset/works/2D/2DConceptArt/concept_11image.png",
     ],
     videos: [],
     turntable: [],
     descriptionMd: "asset/works/2D/2DConceptArt/2DConceptArt.md",
     downloadUrl: "",
-    hours: 24,
+    hours: 100,
   },
   // ------------------------------------------------------------------
   // 2D Character Design
   // ------------------------------------------------------------------
   {
     id: "work_2d_character_design",
-    projectName: "2DcharacterDesign",
+    projectName: "依頼されたデザイン",
     category: "2D",
     order: 7,
-    title: "· (作品名)",
+    title: "· 依頼されたデザイン",
     thumb: "asset/works/2D/2DcharacterDesign/2dcharacter_1image .png",
     images: [
       "asset/works/2D/2DcharacterDesign/2dcharacter_1image .png",
@@ -135,17 +137,17 @@ export const works = [
     turntable: [],
     descriptionMd: "asset/works/2D/2DcharacterDesign/2DcharacterDesign.md",
     downloadUrl: "",
-    hours: 24,
+    hours: 18,
   },
   // ------------------------------------------------------------------
   // 2D イラスト
   // ------------------------------------------------------------------
   {
     id: "work_2d_illus",
-    projectName: "2Dイラスト",
+    projectName: "happy birthday",
     category: "2D",
     order: 8,
-    title: "· (作品名)",
+    title: "· happy birthday",
     thumb: "asset/works/2D/2Dイラスト/illus1.png",
     images: [
       "asset/works/2D/2Dイラスト/illus1.png",
@@ -176,17 +178,17 @@ export const works = [
     turntable: [],
     descriptionMd: "asset/works/2D/デッサンを含むほか/practice.md",
     downloadUrl: "",
-    hours: 24,
+    hours: 10,
   },
   // ------------------------------------------------------------------
   // Printed —— コーディングしたもの
   // ------------------------------------------------------------------
   {
     id: "work_2d_web",
-    projectName: "printed",
+    projectName: "印刷用マインスイーパ",
     category: "CODE",
     order: 3,
-    title: "· printed",
+    title: "· 印刷用マインスイーパ",
     thumb: "asset/works/コーディングしたもの/web/scriptMine_1image.png",
     images: [
       "asset/works/コーディングしたもの/web/scriptMine_1image.png",
@@ -204,7 +206,7 @@ export const works = [
     turntable: [],
     descriptionMd: "asset/works/コーディングしたもの/web/web.md",
     downloadUrl: "",
-    hours: 24,
+    hours: 12,
   },
   // ------------------------------------------------------------------
   // マテリアル＆シェーダー —— コーディングしたもの
@@ -230,7 +232,7 @@ export const works = [
     turntable: [],
     descriptionMd: "asset/works/コーディングしたもの/マテリアル＆シェーダー/マテリアル＆シェーダー.md",
     downloadUrl: "",
-    hours: 24,
+    hours: 18,
   },
   // ------------------------------------------------------------------
   // 協力したインディーゲーム

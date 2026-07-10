@@ -194,6 +194,16 @@ portWebsite/
 - `order` 决定"下一个"的串联顺序；`category` 决定缩略图落在 3D 还是 2D 网格
 - 网格**每行视觉基准最多 3 列**（4+ 自动换行），**实际框数 = 该分类作品数**，可为 0 / 1 / 2 / N；不补空橙框占位；**作品从架子最右侧起摆、向左增长**（1 个=最右格，2 个=右两格）；分类标题（3D/2D）始终保留
 
+### 说明文字编辑约定（`descriptionMd`）
+
+作品页右侧说明区**完全由项目文件夹内的 markdown 驱动**，`works.js` 的 `descriptionMd` 只登记路径，**不含正文**。
+
+- **编辑源（唯一）**：`portWebsite/asset/works/<项目文件夹>/<说明.md>`
+- **运行时**：`workPage.js` fetch 该 md，按空行分块渲染文字、`{{image:N}}`、`{{row:N,M}}`、`{{video:N}}`、`{{code:path}}`
+- **根目录副本**：`asset/works/` 由 CI（`sync-site-root.yml`）从 `portWebsite/` 自动同步；**本地改说明请只改 portWebsite 侧**
+- **本地预览**：推荐打开 `portWebsite/index.html`；push 到 main 后根目录与线上同步
+- **改标题 / 用时 / 图片列表**：改 `portWebsite/js/data/works.js` 对应条目；**改说明正文**：只改项目 md，通常无需动 `works.js`
+
 ---
 
 ## 视觉设计系统（全站复用组件语言）
@@ -256,7 +266,7 @@ portWebsite/
 - **绿框装饰**：`HomepageFrame.png` 用 CSS `border-image` **九宫格（9-slice）** 实现自适应——上下边只拉 X、左右边只拉 Y、四角固定；中间不加 `fill`，透明露出内容。切线与边宽变量见 `css/pages/home.css` 内 **`可调整-边框-大小`**
 - 左：红色爆炸贴纸里放照片
 - 右上：绿色手写 "Shop" + 黑色衬线 "(almost) everything" + "sells"
-- 右下信息块：名字（曹 安安 / ソウ アンアン）、出生学历时间线（1998年12月 中国生まれ / 2021 台湾世新大学卒業 / 2026 日本立命館大学 大学院卒業予定）、学習意欲（2d/3d/music/web/vibe coding(ai利用)）、チームワーク（indie/jam/school）、「なんでも屋」と言われています
+- 右下信息块：名字（曹 安安 / ソウ アンアン）、出生学历时间线（1998年12月 中国生まれ / 2021 台湾世新大学卒業 / 2026 日本立命館大学 大学院卒業予定）、学習意欲（2d/3d/music/web/vibe coding(ai利用)）、チームワーク（indie/jam/school）、「なんでも屋」と言われています！
 - "NEW!!"：**独立红字**，做放大缩小帧动画
 - 底部：绿色向下箭头（进入提示）
 - 白色手绘贴纸装饰框（PNG）

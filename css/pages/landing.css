@@ -43,7 +43,7 @@
   --landing-main-script-top: 79cqh;
   --landing-main-script-size: 10cqh;
 
-  /* 可调整-位置 / 可调整-尺寸：作品棚（3D / コーディングしたもの / 2D / 協力したインディーゲーム 标签 + 缩略图，统一右对齐） */
+  /* 可调整-位置 / 可调整-尺寸：作品棚（3D / コーディングしたもの / 協力したインディーゲーム / 2D 标签 + 缩略图，统一右对齐） */
   --landing-scrollbar-right: 4.5cqw;    /* 可调整-位置：滑块轨道距舞台右缘 */
   --landing-scrollbar-width: 1.5cqw;
   --landing-shelf-gap: 1.2cqw;          /* 可调整-尺寸：棚区与滑块间距 */
@@ -54,7 +54,6 @@
   --landing-shelf-section-gap: 4.5cqh;    /* 可调整-尺寸：各分类区间距（4 栏） */
   --landing-shelf-label-gap: 1.5cqh;    /* 可调整-尺寸：标签与缩略图行间距 */
   --landing-grid-gap: 1.6cqw;
-  --landing-thumb-height: 16.5cqh;
   --landing-cat-label-size: 4.5cqh;
 
   /* 可调整-尺寸：滑块内边距（thumb 在轨道内滑动） */
@@ -274,7 +273,7 @@
   width: 100%;
 }
 
-/* 3D(ほか) / コーディングしたもの / 2D(ほか) / 協力したインディーゲーム 分类标签（Yu Gothic，右对齐） */
+/* 3D / コーディングしたもの / 協力したインディーゲーム / 2D(ほか) 分类标签（Yu Gothic，右对齐） */
 .landing-cat-label {
   width: 100%;
   text-align: right;                      /* 可调整-位置：标签文字右对齐 */
@@ -293,7 +292,7 @@
   width: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: var(--landing-thumb-height);
+  grid-auto-rows: auto;
   gap: var(--landing-grid-gap);
   direction: rtl;
 }
@@ -314,26 +313,26 @@
   background: rgba(246, 161, 75, 0.15);
 }
 
-.landing-thumb img {
+.landing-thumb > img:not(.landing-thumb-preview) {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* 缩略图 hover 视频预览（默认隐藏，is-previewing 时切换显示） */
-.landing-thumb video {
+/* 缩略图 hover 预览（默认隐藏，is-previewing 时切换显示） */
+.landing-thumb .landing-thumb-preview {
   display: none;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.landing-thumb.is-previewing img {
+.landing-thumb.is-previewing > img:not(.landing-thumb-preview) {
   display: none;
 }
 
-.landing-thumb.is-previewing video {
+.landing-thumb.is-previewing .landing-thumb-preview {
   display: block;
   position: relative;
   z-index: 1;

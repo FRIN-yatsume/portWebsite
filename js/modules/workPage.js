@@ -1,20 +1,61 @@
 // ==========================================================================
 // 作品详情页渲染模块（进入作品）
 // —— 由 works 数据表驱动：标题 / 主展示 / 细节框 / 说明 / 下载链接
-// —— 说明区 markdown 支持 {{video:N}} / {{image:N}} 混排文字/图片/视频
+// —— 说明区 markdown 支持 {{video:N}} / {{image:N}} / {{code:path}} 混排；图片/视频均可 lightbox 放大
 // —— 检索标签：可调整-文字（标题/说明）/ 可调整-素材（图片/视频路径）
 // ==========================================================================
 
 import { works } from "../data/works.js";
-import { bindVideoLightbox, closeLightbox } from "./lightbox.js";
+import { closeLightbox } from "./lightbox.js";
 import { refreshWorkDescScroll, resetWorkDescScroll } from "./workDescScroll.js";
 import { refreshWorkCartUI, syncHoursBar } from "./workCart.js";
+import { pauseBackgroundMusic } from "./player.js";
 
 /** @type {string|null} 当前展示的作品 ID */
 let currentWorkId = null;
 
 /** @type {(() => void)|null} 主展示区轮播清理函数 */
 let mainCarouselCleanup = null;
+
+/** 当前作品主展示视频是否开声 */
+let workMainAudioEnabled = false;
+
+// ------------------------------------------------------------------
+// 主展示视频音轨切换
+// ------------------------------------------------------------------
+function getWorkMainVideo() {
+  return document.querySelector("#work .work-main video.work-main-media");
+}
+
+function syncAudioToggleUI(on) {
+  document.querySelectorAll(".work-desc-audio-toggle").forEach((btn) => {
+    btn.classList.toggle("is-active", on);
+    btn.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+}
+
+function setWorkMainAudioEnabled(on) {
+  const video = getWorkMainVideo();
+  if (!video) return;
+
+  workMainAudioEnabled = on;
+  video.muted = !on;
+  if (on) pauseBackgroundMusic();
+  syncAudioToggleUI(on);
+}
+
+function bindWorkAudioToggle() {
+  const descEl = document.querySelector(".work-desc");
+  if (!descEl || descEl.dataset.audioToggleBound) return;
+  descEl.dataset.audioToggleBound = "1";
+  descEl.addEventListener("click", (e) => {
+    const toggle = e.target.closest(".work-desc-audio-toggle");
+    if (!toggle || !getWorkMainVideo()) return;
+    setWorkMainAudioEnabled(!workMainAudioEnabled);
+  });
+}
+
+bindWorkAudioToggle();
 
 // ------------------------------------------------------------------
 // 工具：清空容器子节点
@@ -67,6 +108,40 @@ function createDescVideoFrame(src) {
   frame.className = "work-desc-video frame-orange";
   frame.appendChild(createMutedVideo(src, "work-desc-video-media"));
   return frame;
+}
+
+// ------------------------------------------------------------------
+// 说明区：可折叠代码块（默认收起，点击展开）
+// ------------------------------------------------------------------
+async function createDescCodeBlock(src, label = "シェーダーコード") {
+  try {
+    const res = await fetch(src);
+    if (!res.ok) return null;
+    const code = await res.text();
+    if (!code.trim()) return null;
+
+    const details = document.createElement("details");
+    details.className = "work-desc-code";
+
+    const summary = document.createElement("summary");
+    summary.className = "work-desc-code-summary";
+    summary.textContent = label;
+
+    const pre = document.createElement("pre");
+    pre.className = "work-desc-code-pre";
+    const codeEl = document.createElement("code");
+    codeEl.className = "work-desc-code-body";
+    codeEl.textContent = code;
+    pre.appendChild(codeEl);
+
+    details.appendChild(summary);
+    details.appendChild(pre);
+    details.addEventListener("toggle", () => refreshWorkDescScroll());
+
+    return details;
+  } catch {
+    return null;
+  }
 }
 
 // ------------------------------------------------------------------
@@ -130,7 +205,27 @@ function setupMainDisplay(container, work) {
 }
 
 // ------------------------------------------------------------------
-// 说明区混排渲染：段落 / {{image:N}} / {{video:N}}（N 为 1-based）
+// 说明区段落：支持 __下划线__ 内联标记
+// ------------------------------------------------------------------
+function appendDescParagraphText(p, text) {
+  const parts = text.split(/(__[^_]+__)/g);
+  for (const part of parts) {
+    if (part.startsWith("__") && part.endsWith("__") && part.length > 4) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "work-desc-audio-toggle";
+      btn.textContent = part.slice(2, -2);
+      btn.setAttribute("aria-pressed", "false");
+      btn.setAttribute("aria-label", "動画の音声を切り替え");
+      p.appendChild(btn);
+    } else if (part) {
+      p.appendChild(document.createTextNode(part));
+    }
+  }
+}
+
+// ------------------------------------------------------------------
+// 说明区混排渲染：段落 / {{image:N}} / {{video:N}} / {{code:path}}（N 为 1-based）
 // @returns {Promise<boolean>} 是否渲染出任何内容块
 // ------------------------------------------------------------------
 async function renderDescriptionContent(work, container) {
@@ -154,7 +249,7 @@ async function renderDescriptionContent(work, container) {
     const blocks = text.split(/\n\s*\n/).filter((b) => b.trim());
     let rendered = false;
 
-    blocks.forEach((block) => {
+    for (const block of blocks) {
       const trimmed = block.trim();
 
       // 视频块：{{video:N}}
@@ -166,7 +261,27 @@ async function renderDescriptionContent(work, container) {
           container.appendChild(createDescVideoFrame(src));
           rendered = true;
         }
-        return;
+        continue;
+      }
+
+      // 并排图片行：{{row:8,9}}
+      const rowMatch = trimmed.match(/^\{\{row:([\d,\s]+)\}\}$/);
+      if (rowMatch) {
+        const indices = rowMatch[1]
+          .split(",")
+          .map((s) => parseInt(s.trim(), 10) - 1)
+          .filter((idx) => !Number.isNaN(idx) && images[idx]);
+
+        if (indices.length) {
+          const row = document.createElement("div");
+          row.className = "work-desc-image-row";
+          for (const idx of indices) {
+            row.appendChild(createDescImageFrame(images[idx], work.title));
+          }
+          container.appendChild(row);
+          rendered = true;
+        }
+        continue;
       }
 
       // 图片块：{{image:N}}
@@ -178,16 +293,29 @@ async function renderDescriptionContent(work, container) {
           container.appendChild(createDescImageFrame(src, work.title));
           rendered = true;
         }
-        return;
+        continue;
+      }
+
+      // 代码块：{{code:路径}} 或 {{code:路径|展开标签}}
+      const codeMatch = trimmed.match(/^\{\{code:([^|}]+)(?:\|([^}]+))?\}\}$/);
+      if (codeMatch) {
+        const src = codeMatch[1].trim();
+        const label = codeMatch[2]?.trim() || "コードを見る";
+        const codeBlock = await createDescCodeBlock(src, label);
+        if (codeBlock) {
+          container.appendChild(codeBlock);
+          rendered = true;
+        }
+        continue;
       }
 
       // 普通段落
       const p = document.createElement("p");
       p.className = "work-desc-p";
-      p.textContent = trimmed;
+      appendDescParagraphText(p, trimmed);
       container.appendChild(p);
       rendered = true;
-    });
+    }
 
     return rendered;
   } catch {
@@ -211,9 +339,12 @@ function getNextWork(work) {
 export function pauseWorkVideos() {
   stopMainCarousel();
   closeLightbox();
+  workMainAudioEnabled = false;
+  syncAudioToggleUI(false);
   document.querySelectorAll("#work video").forEach((v) => {
     v.pause();
     v.currentTime = 0;
+    v.muted = true;
   });
 }
 
@@ -277,7 +408,6 @@ export async function renderWork(workId) {
       descEl?.classList.remove("is-hidden");
       descViewport?.classList.remove("is-hidden");
       descScrollbar?.classList.remove("is-hidden");
-      bindVideoLightbox(descEl);
       refreshWorkDescScroll();
     } else {
       descEl?.classList.add("is-hidden");
@@ -306,7 +436,7 @@ export async function renderWork(workId) {
     if (nextWork) {
       nextBtn.classList.remove("is-hidden");
       nextBtn.dataset.workId = nextWork.id;
-      nextBtn.textContent = `下一个：${nextWork.title}`;
+      nextBtn.textContent = `↓ ${nextWork.title}`;
     } else {
       nextBtn.classList.add("is-hidden");
       delete nextBtn.dataset.workId;
