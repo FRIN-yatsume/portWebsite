@@ -199,8 +199,9 @@ portWebsite/
 作品页右侧说明区**完全由项目文件夹内的 markdown 驱动**，`works.js` 的 `descriptionMd` 只登记路径，**不含正文**。
 
 - **编辑源（唯一）**：`portWebsite/asset/works/<项目文件夹>/<说明.md>`
+- **本地快捷路径**：根目录 `asset/works/` 已通过目录联接（Junction）指向 `portWebsite/asset/works/`，两处编辑的是**同一份文件**
 - **运行时**：`workPage.js` fetch 该 md，按空行分块渲染文字、`{{image:N}}`、`{{row:N,M}}`、`{{video:N}}`、`{{code:path}}`
-- **根目录副本**：`asset/works/` 由 CI（`sync-site-root.yml`）从 `portWebsite/` 自动同步；**本地改说明请只改 portWebsite 侧**
+- **根目录其余副本**：`js/`、`css/`、`index.html` 等仍由 CI（`sync-site-root.yml`）从 `portWebsite/` 自动同步；**改说明 md 可任选联接路径**
 - **本地预览**：推荐打开 `portWebsite/index.html`；push 到 main 后根目录与线上同步
 - **改标题 / 用时 / 图片列表**：改 `portWebsite/js/data/works.js` 对应条目；**改说明正文**：只改项目 md，通常无需动 `works.js`
 
