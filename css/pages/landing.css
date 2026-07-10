@@ -43,7 +43,7 @@
   --landing-main-script-top: 79cqh;
   --landing-main-script-size: 10cqh;
 
-  /* 可调整-位置 / 可调整-尺寸：作品棚（3D / マテリアル＆シェーダー / 2D 标签 + 缩略图，统一右对齐） */
+  /* 可调整-位置 / 可调整-尺寸：作品棚（3D / コーディングしたもの / 2D / 協力したインディーゲーム 标签 + 缩略图，统一右对齐） */
   --landing-scrollbar-right: 4.5cqw;    /* 可调整-位置：滑块轨道距舞台右缘 */
   --landing-scrollbar-width: 1.5cqw;
   --landing-shelf-gap: 1.2cqw;          /* 可调整-尺寸：棚区与滑块间距 */
@@ -51,7 +51,7 @@
   --landing-shelf-top: 28.5cqh;
   --landing-shelf-height: 68cqh;      /* 与滑块轨道同高 */
   --landing-grid-width: 36cqw;
-  --landing-shelf-section-gap: 6cqh;    /* 可调整-尺寸：各分类区间距 */
+  --landing-shelf-section-gap: 4.5cqh;    /* 可调整-尺寸：各分类区间距（4 栏） */
   --landing-shelf-label-gap: 1.5cqh;    /* 可调整-尺寸：标签与缩略图行间距 */
   --landing-grid-gap: 1.6cqw;
   --landing-thumb-height: 16.5cqh;
@@ -274,7 +274,7 @@
   width: 100%;
 }
 
-/* 3D(ほか) / マテリアル＆シェーダー / 2D(ほか) 分类标签（Yu Gothic，右对齐） */
+/* 3D(ほか) / コーディングしたもの / 2D(ほか) / 協力したインディーゲーム 分类标签（Yu Gothic，右对齐） */
 .landing-cat-label {
   width: 100%;
   text-align: right;                      /* 可调整-位置：标签文字右对齐 */

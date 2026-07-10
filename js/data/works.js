@@ -10,7 +10,7 @@
  * @typedef {Object} Work
  * @property {string}   id            唯一 ID（过渡动画用它定位网格槽位）
  * @property {string}   projectName   项目名（驼峰截断），用于拼素材文件名
- * @property {"3D"|"MS"|"2D"} category  决定进哪个网格区（MS = マテリアル＆シェーダー）
+ * @property {"3D"|"CODE"|"2D"|"INDIE"} category  决定进哪个网格区（CODE = コーディングしたもの，INDIE = 協力したインディーゲーム）
  * @property {number}   order         我安排的顺序（全站一条线），底部「下一个」按此递增
  * @property {string}   title         作品页左上标题
  * @property {string}   [thumb]       缩略图（默认取 Image_(项目名)1.png，可覆盖）
@@ -159,31 +159,83 @@ export const works = [
     hours: 24,
   },
   // ------------------------------------------------------------------
-  // Web
+  // Web —— コーディングしたもの
   // ------------------------------------------------------------------
   {
     id: "work_2d_web",
     projectName: "web",
-    category: "2D",
+    category: "CODE",
     order: 6,
     title: "· (作品名)",
-    thumb: "asset/works/2D/web/scriptMine_1image.png",
+    thumb: "asset/works/コーディングしたもの/web/scriptMine_1image.png",
     images: [
-      "asset/works/2D/web/scriptMine_1image.png",
-      "asset/works/2D/web/scriptMine_2image.png",
-      "asset/works/2D/web/scriptMine_3image.png",
-      "asset/works/2D/web/scriptMine_4image.png.png",
-      "asset/works/2D/web/scriptMine_5image.png",
+      "asset/works/コーディングしたもの/web/scriptMine_1image.png",
+      "asset/works/コーディングしたもの/web/scriptMine_2image.png",
+      "asset/works/コーディングしたもの/web/scriptMine_3image.png",
+      "asset/works/コーディングしたもの/web/scriptMine_4image.png",
+      "asset/works/コーディングしたもの/web/scriptMine_5image.png",
     ],
     videos: [
-      "asset/works/2D/web/scriptMine_1video.mp4",
+      "asset/works/コーディングしたもの/web/scriptMine_1video.mp4",
     ],
     mainVideos: [
-      "asset/works/2D/web/scriptMine_1video.mp4",
+      "asset/works/コーディングしたもの/web/scriptMine_1video.mp4",
     ],
     turntable: [],
-    descriptionMd: "asset/works/2D/web/web.md",
+    descriptionMd: "asset/works/コーディングしたもの/web/web.md",
     downloadUrl: "",
     hours: 24,
+  },
+  // ------------------------------------------------------------------
+  // マテリアル＆シェーダー —— コーディングしたもの
+  // ------------------------------------------------------------------
+  {
+    id: "work_shader_crt",
+    projectName: "マテリアル＆シェーダー",
+    category: "CODE",
+    order: 7,
+    title: "· (作品名)",
+    images: [],
+    videos: [
+      "asset/works/コーディングしたもの/マテリアル＆シェーダー/CRT.mp4",
+    ],
+    mainVideos: [
+      "asset/works/コーディングしたもの/マテリアル＆シェーダー/CRT.mp4",
+    ],
+    turntable: [],
+    descriptionMd: "asset/works/コーディングしたもの/マテリアル＆シェーダー/マテリアル＆シェーダー.md",
+    downloadUrl: "",
+    hours: 24,
+  },
+  // ------------------------------------------------------------------
+  // 協力したインディーゲーム
+  // ------------------------------------------------------------------
+  {
+    id: "work_indie",
+    projectName: "indie",
+    category: "INDIE",
+    order: 8,
+    title: "· (作品名)",
+    thumb: "asset/works/協力したインディーゲーム/indie_1image.png",
+    images: [
+      "asset/works/協力したインディーゲーム/indie_1image.png",
+      "asset/works/協力したインディーゲーム/indie_2image.png",
+      "asset/works/協力したインディーゲーム/indie_3image.png",
+      "asset/works/協力したインディーゲーム/indie_4image.png",
+      "asset/works/協力したインディーゲーム/indie_5image.png",
+      "asset/works/協力したインディーゲーム/indie_6image.png",
+      "asset/works/協力したインディーゲーム/indie_7image.png",
+      "asset/works/協力したインディーゲーム/indie_8image.png",
+      "asset/works/協力したインディーゲーム/indie_9image.png",
+      "asset/works/協力したインディーゲーム/indie_10image.png",
+      "asset/works/協力したインディーゲーム/indie_11image.png",
+      "asset/works/協力したインディーゲーム/indie_12image.png",
+      "asset/works/協力したインディーゲーム/indie_13image.png",
+    ],
+    videos: [],
+    turntable: [],
+    descriptionMd: "asset/works/協力したインディーゲーム/協力したインディーゲーム.md",
+    downloadUrl: "",
+    hours: 48,
   },
 ];

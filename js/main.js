@@ -174,7 +174,7 @@ function bindLandingScrollBack() {
 }
 
 // ------------------------------------------------------------------
-// 进入网页渲染：由 works 数据表填充 Main 区 + 3D / MS / 2D 缩略图网格
+// 进入网页渲染：由 works 数据表填充 Main 区 + 3D / CODE / 2D / INDIE 缩略图网格
 // —— 数据驱动：上新只改 works.js，此处按 category/order 自动摆放
 // ------------------------------------------------------------------
 
@@ -322,11 +322,12 @@ function renderLandingGrid(category, gridEl) {
   });
 }
 
-// 渲染整个进入网页：三类网格 + Main 主推作品
+// 渲染整个进入网页：四类网格 + Main 主推作品
 function renderLanding() {
   renderLandingGrid("3D", document.querySelector(".landing-grid--3d"));
-  renderLandingGrid("MS", document.querySelector(".landing-grid--ms"));
+  renderLandingGrid("CODE", document.querySelector(".landing-grid--code"));
   renderLandingGrid("2D", document.querySelector(".landing-grid--2d"));
+  renderLandingGrid("INDIE", document.querySelector(".landing-grid--indie"));
 
   // Main 区 = 全站 order 最小的主推作品（视频优先，否则首图）
   const mainWork = [...works].sort((a, b) => a.order - b.order)[0];
