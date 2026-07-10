@@ -1,0 +1,350 @@
+#target indesign
+
+/*
+ * 扫雷打印版 · 批量生成（5×5，5 颗雷）
+ * - 每批在文档末尾新增 10 页（沿用 chessbox 母版）
+ * - 每格图标 12.9 mm，居中于格子内
+ * - 启动时选择素材文件夹（记住上次路径作为默认位置）
+ * - 每批完成后询问是否继续生成
+ */
+
+function main() {
+    if (app.documents.length === 0) {
+        alert("请先打开 InDesign 模板文档，再运行脚本。");
+        return;
+    }
+
+    var assetFolder = pickAssetFolder();
+    if (!assetFolder) {
+        return;
+    }
+
+    try {
+        validateAssets(assetFolder, CONFIG.maxNumber);
+    } catch (e) {
+        alert(e.message || e);
+        return;
+    }
+
+    saveLastFolder(assetFolder);
+
+    var sessionMark = false;
+
+    while (true) {
+        if (sessionMark) {
+            var goOn = confirm(
+                "上一批 10 页已生成完毕。\n是否继续生成下一批（10 页）？",
+                false,
+                "扫雷批量生成"
+            );
+            if (!goOn) {
+                saveLastFolder(assetFolder);
+                return;
+            }
+        }
+
+        try {
+            app.doScript(
+                generateBatch,
+                ScriptLanguage.JAVASCRIPT,
+                [assetFolder.fsName],
+                UndoModes.ENTIRE_SCRIPT,
+                "生成扫雷批次（10页）"
+            );
+        } catch (e) {
+            alert("执行失败：\n" + (e.message || e));
+            saveLastFolder(assetFolder);
+            return;
+        }
+
+        sessionMark = true;
+    }
+}
+
+// ============================================================
+// 固定参数
+// ============================================================
+
+var CONFIG = {
+    rows: 5,
+    cols: 5,
+    mineCount: 5,
+    maxNumber: 5,
+    maxGenerateAttempts: 200,
+    batchSize: 10,
+
+    gridSize: 88.6,
+    startX: 48.2,
+    startY: 6.2,
+    iconSize: 12.9,
+
+    layerName: "Minesweeper"
+};
+
+// ============================================================
+// 批量生成
+// ============================================================
+
+function generateBatch(args) {
+    var assetFolder = new Folder(args[0]);
+    var doc = app.activeDocument;
+    app.scriptPreferences.measurementUnit = MeasurementUnits.MILLIMETERS;
+
+    var layer = getOrCreateLayer(doc, CONFIG.layerName);
+    var tileSize = CONFIG.gridSize / CONFIG.cols;
+    var i, page, board, groupItems;
+
+    for (i = 0; i < CONFIG.batchSize; i++) {
+        page = doc.pages.add(LocationOptions.AT_END);
+        board = generateBoard(
+            CONFIG.rows,
+            CONFIG.cols,
+            CONFIG.mineCount,
+            CONFIG.maxNumber,
+            CONFIG.maxGenerateAttempts
+        );
+        groupItems = buildGrid(page, layer, assetFolder, board, CONFIG, tileSize);
+        if (groupItems.length > 0) {
+            page.groups.add(groupItems);
+        }
+        board = null;
+        groupItems = null;
+        page = null;
+    }
+
+    alert("本批已生成 " + CONFIG.batchSize + " 页（5×5，5 颗雷）。");
+}
+
+// ============================================================
+// 文件夹选择与记忆
+// ============================================================
+
+function pickAssetFolder() {
+    var prompt = "选择您的文件夹\n（需包含 0.png–5.png 和 bomb.png）";
+    var last = loadLastFolder();
+    var start = last && last.exists ? last : Folder.myDocuments;
+    // ExtendScript 中文件夹对话框用实例方法 selectDlg，非 selectDialog
+    return start.selectDlg(prompt);
+}
+
+function getPrefsFile() {
+    var scriptFile = new File($.fileName);
+    return new File(scriptFile.parent.fsName + "/MinesweeperPrint.prefs");
+}
+
+function loadLastFolder() {
+    var prefsFile = getPrefsFile();
+    if (!prefsFile.exists) {
+        return null;
+    }
+    prefsFile.open("r");
+    var content = prefsFile.read();
+    prefsFile.close();
+    var lines = content.split(/\r?\n/);
+    var i, line, parts;
+    for (i = 0; i < lines.length; i++) {
+        line = lines[i];
+        if (line.indexOf("folder=") === 0) {
+            parts = line.substring(7);
+            if (parts) {
+                return new Folder(parts);
+            }
+        }
+    }
+    return null;
+}
+
+function saveLastFolder(folder) {
+    var prefsFile = getPrefsFile();
+    prefsFile.open("w");
+    prefsFile.write("folder=" + folder.fsName);
+    prefsFile.close();
+}
+
+// ============================================================
+// 扫雷逻辑
+// ============================================================
+
+function generateBoard(rows, cols, mineCount, maxNumber, maxAttempts) {
+    var total = rows * cols;
+    if (mineCount >= total) {
+        throw new Error("雷数不能大于等于格子总数。");
+    }
+
+    var attempt, mines, board;
+    for (attempt = 0; attempt < maxAttempts; attempt++) {
+        mines = createMineSet(rows, cols, mineCount);
+        board = buildNumberBoard(rows, cols, mines);
+        if (boardMaxValue(board) <= maxNumber) {
+            return board;
+        }
+    }
+    throw new Error(
+        "无法生成邻格数字均 ≤ " + maxNumber + " 的版面，请检查雷数或素材。"
+    );
+}
+
+function createMineSet(rows, cols, mineCount) {
+    var indices = [];
+    var i;
+    for (i = 0; i < rows * cols; i++) {
+        indices.push(i);
+    }
+    shuffle(indices);
+
+    var mines = {};
+    for (i = 0; i < mineCount; i++) {
+        mines[indices[i]] = true;
+    }
+    return mines;
+}
+
+function buildNumberBoard(rows, cols, mines) {
+    var board = [];
+    var r, c, dr, dc, nr, nc, count;
+
+    for (r = 0; r < rows; r++) {
+        board[r] = [];
+        for (c = 0; c < cols; c++) {
+            if (mines[cellIndex(rows, cols, r, c)]) {
+                board[r][c] = -1;
+                continue;
+            }
+            count = 0;
+            for (dr = -1; dr <= 1; dr++) {
+                for (dc = -1; dc <= 1; dc++) {
+                    if (dr === 0 && dc === 0) {
+                        continue;
+                    }
+                    nr = r + dr;
+                    nc = c + dc;
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && mines[cellIndex(rows, cols, nr, nc)]) {
+                        count++;
+                    }
+                }
+            }
+            board[r][c] = count;
+        }
+    }
+    return board;
+}
+
+function boardMaxValue(board) {
+    var max = 0;
+    var r, c, v;
+    for (r = 0; r < board.length; r++) {
+        for (c = 0; c < board[r].length; c++) {
+            v = board[r][c];
+            if (v > max) {
+                max = v;
+            }
+        }
+    }
+    return max;
+}
+
+function cellIndex(rows, cols, r, c) {
+    return r * cols + c;
+}
+
+function shuffle(arr) {
+    var i = arr.length;
+    var j, tmp;
+    while (i > 1) {
+        j = Math.floor(Math.random() * i);
+        i--;
+        tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+}
+
+// ============================================================
+// InDesign 排版
+// ============================================================
+
+function buildGrid(page, layer, assetFolder, board, cfg, tileSize) {
+    var rows = board.length;
+    var cols = board[0].length;
+    var groupItems = [];
+    var r, c, value;
+    var cellX1, cellY1, cellX2, cellY2;
+    var iconX1, iconY1, iconX2, iconY2;
+    var offset = (tileSize - cfg.iconSize) / 2;
+    var iconFrame, imageFile;
+
+    for (r = 0; r < rows; r++) {
+        for (c = 0; c < cols; c++) {
+            value = board[r][c];
+            cellY1 = cfg.startY + r * tileSize;
+            cellX1 = cfg.startX + c * tileSize;
+            cellY2 = cellY1 + tileSize;
+            cellX2 = cellX1 + tileSize;
+
+            iconY1 = cellY1 + offset;
+            iconX1 = cellX1 + offset;
+            iconY2 = iconY1 + cfg.iconSize;
+            iconX2 = iconX1 + cfg.iconSize;
+
+            iconFrame = page.rectangles.add({
+                geometricBounds: [iconY1, iconX1, iconY2, iconX2],
+                strokeWeight: 0,
+                fillColor: "None",
+                itemLayer: layer
+            });
+
+            imageFile = getImageFile(assetFolder, value);
+            iconFrame.place(imageFile);
+            fitFrameContent(iconFrame);
+            groupItems.push(iconFrame);
+        }
+    }
+    return groupItems;
+}
+
+function getImageFile(assetFolder, value) {
+    var name = value === -1 ? "bomb.png" : String(value) + ".png";
+    var file = new File(assetFolder.fsName + "/" + name);
+    if (!file.exists) {
+        throw new Error("缺少图片：" + file.fsName);
+    }
+    return file;
+}
+
+function fitFrameContent(frame) {
+    try {
+        frame.fit(FitOptions.PROPORTIONALLY);
+        frame.fit(FitOptions.CENTER_CONTENT);
+    } catch (e) {
+        frame.fit(FitOptions.CENTER_CONTENT);
+    }
+}
+
+function getOrCreateLayer(doc, name) {
+    var layer;
+    try {
+        layer = doc.layers.itemByName(name);
+        if (!layer.isValid) {
+            throw "missing";
+        }
+    } catch (e) {
+        layer = doc.layers.add({ name: name });
+    }
+    return layer;
+}
+
+function validateAssets(assetFolder, maxNumber) {
+    var n, file;
+    for (n = 0; n <= maxNumber; n++) {
+        file = new File(assetFolder.fsName + "/" + n + ".png");
+        if (!file.exists) {
+            throw new Error("缺少数字素材：" + file.fsName);
+        }
+    }
+    file = new File(assetFolder.fsName + "/bomb.png");
+    if (!file.exists) {
+        throw new Error("缺少雷素材：bomb.png");
+    }
+}
+
+main();

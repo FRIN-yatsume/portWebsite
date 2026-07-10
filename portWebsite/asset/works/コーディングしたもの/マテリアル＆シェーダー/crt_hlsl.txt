@@ -1,0 +1,196 @@
+// CRT ポストプロセス（HLSL 版）
+// 元の Godot canvas_item シェーダーを HLSL へ「翻訳」したもの
+// SCREEN_UV -> uv (TEXCOORD), screen_tex -> _ScreenTex, TIME -> _Time,
+// SCREEN_PIXEL_SIZE -> _ScreenPixelSize, mix -> lerp, fract -> frac, vecN -> floatN
+
+#define TAU 6.28318530718
+
+// ====== 画面テクスチャ（= PostProcessInput0） ======
+Texture2D    _ScreenTex      : register(t0);
+SamplerState _ScreenSampler  : register(s0);   // filter_linear 相当
+
+// ====== Uniform 群（cbuffer にまとめる） ======
+cbuffer Params : register(b0)
+{
+    // --- Distort ---
+    /** 樽型歪みの強度 */
+    float strength_distort;     // = 0.06
+    /** 切り取り比率（小さいほど多く切る） */
+    float crop_distort;         // = 0.857  (0.5 ~ 1.0)
+    /** RGB 色収差のずれ量 */
+    float aberration_distort;   // = 0.001
+    /** ビネット（周辺減光）の着色 */
+    float3 vignette_distort;    // = (0.0128, 0.0243, 0.0604)
+    /** ビネットの強度（0=なし、1=最大） */
+    float intensity_vignette;   // = 1.0  (0.0 ~ 2.0)
+    /** ビネットの範囲（大きいほど中心へ広がる） */
+    float scale_vignette;       // = 1.0  (0.0 ~ 2.0)
+
+    // --- Scanline ---
+    /** 走査線の間隔 */
+    float div_scanline;         // = 4.3
+    /** 暗線の明るさ（小さいほど暗い） */
+    float low_scanline;         // = 0.3  (0.0 ~ 1.0)
+    /** 明線の明るさ（>1 で増光） */
+    float high_scanline;        // = 1.5  (1.0 ~ 2.0)
+
+    // --- Flyback ---
+    /** 光帯が下に移動する速度 */
+    float speed_flyback;        // = 0.2
+    /** 光帯の太さ */
+    float width_flyback;        // = 0.15 (0.0 ~ 0.5)
+    /** 光帯の強度（負=暗くする） */
+    float intensity_flyback;    // = -0.12 (-1.0 ~ 1.0)
+    /** 光帯の傾き */
+    float tilt_flyback;         // = 0.1  (-1.0 ~ 1.0)
+
+    // --- Snow ---
+    /** 粒子の出現比率（小さいほどまばら） */
+    float density_snow;         // = 0.04 (0.0 ~ 0.2)
+    /** 全体の強度 */
+    float strength_snow;        // = 0.25 (0.0 ~ 1.0)
+    /** 明滅・更新の速さ */
+    float speed_snow;           // = 12.0
+    /** 粒子のサイズ（ピクセル倍率） */
+    float size_snow;            // = 2.0  (1.0 ~ 8.0)
+    /** 時間ブロックごとの出現確率（小さいほど「時々しか出ない」） */
+    float burst_snow;           // = 0.3  (0.0 ~ 1.0)
+
+    // --- Mask ---
+    /** マスクのブロックサイズ（大きいほど細かい） */
+    float scale_mask;           // = 6.0  (1.0 ~ 20.0)
+    /** 時間に沿った変化の速度 */
+    float flow_mask;            // = 0.15
+    /** ドメインワープの強度（大きいほど乱れる） */
+    float warp_mask;            // = 4.0  (0.0 ~ 6.0)
+    /** 隠す量のしきい値（大きいほど多く隠す） */
+    float coverage_mask;        // = 0.5  (0.0 ~ 1.0)
+    /** 被覆量の揺らぎ幅 */
+    float timevar_mask;         // = 0.2  (0.0 ~ 0.5)
+    /** 被覆量の揺らぎ速度 */
+    float varspeed_mask;        // = 0.3
+
+    // --- システム値（Godot の組み込みに相当） ---
+    /** 経過時間（Godot の TIME） */
+    float _Time;
+    /** 1 ピクセルの UV サイズ = 1/解像度（Godot の SCREEN_PIXEL_SIZE） */
+    float2 _ScreenPixelSize;
+}
+
+
+float hash21(float2 p)
+{
+    return frac(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
+}
+
+// セルごとのランダムな勾配ベクトル
+float2 grad21(float2 i)
+{
+    float a = hash21(i) * TAU;
+    return float2(cos(a), sin(a));
+}
+
+// パーリン勾配ノイズ、[0,1] に remap
+float pnoise(float2 p)
+{
+    float2 i = floor(p);
+    float2 f = frac(p);
+    float2 u = f * f * (3.0 - 2.0 * f);
+    float a = dot(grad21(i + float2(0.0, 0.0)), f - float2(0.0, 0.0));
+    float b = dot(grad21(i + float2(1.0, 0.0)), f - float2(1.0, 0.0));
+    float c = dot(grad21(i + float2(0.0, 1.0)), f - float2(0.0, 1.0));
+    float d = dot(grad21(i + float2(1.0, 1.0)), f - float2(1.0, 1.0));
+    float v = lerp(lerp(a, b, u.x), lerp(c, d, u.x), u.y);
+    return v * 0.5 + 0.5;
+}
+
+// フラクタルブラウン運動（4 オクターブ + 各層で回転）
+float fbm(float2 p)
+{
+    float v = 0.0;
+    float amp = 0.5;
+    float2x2 rot = float2x2(0.80, 0.60, -0.60, 0.80);
+    for (int k = 0; k < 4; k++)
+    {
+        v += amp * pnoise(p);
+        p = mul(rot, p) * 2.0 + 17.0;
+        amp *= 0.5;
+    }
+    return v;
+}
+
+
+// ピクセルシェーダー入力（フルスクリーン三角形/クアッドから）
+struct PSInput
+{
+    float4 pos : SV_POSITION;
+    float2 uv  : TEXCOORD0;   // Godot の SCREEN_UV 相当
+};
+
+float4 PSMain(PSInput input) : SV_TARGET
+{
+    float2 SCREEN_UV = input.uv;
+
+    // UV を中心化: [0,1] -> [-1,1]
+    float2 cuv = SCREEN_UV * 2.0 - 1.0;
+
+    // 樽型歪み
+    float r2 = dot(cuv, cuv);
+    float k  = clamp(smoothstep(0.4, 1.9, r2), 0.0, 1.0);
+    float distort = 1.0 + strength_distort * exp(k);
+
+    // 歪み + 0.9 切り取り + [0,1] へ remap
+    float2 duv = cuv * distort * crop_distort * 0.5 + 0.5;
+
+    // RGB 色収差
+    float rch = _ScreenTex.Sample(_ScreenSampler, duv + aberration_distort).r;
+    float gch = _ScreenTex.Sample(_ScreenSampler, duv - aberration_distort).g;
+    float bch = _ScreenTex.Sample(_ScreenSampler, duv).b;
+    float3 col = float3(rch, gch, bch);
+
+    // ビネット
+    float vmask = clamp(smoothstep(0.8, 2.3, r2 * scale_vignette), 0.0, 1.0);
+    col = lerp(col, vignette_distort, clamp(vmask * intensity_vignette, 0.0, 1.0));
+
+    // 走査線（静的）
+    float view_h = 1.0 / _ScreenPixelSize.y;
+    float s = sin(TAU * duv.y * view_h / div_scanline);
+    float bright = low_scanline + (s + 1.0) * 0.5 * (high_scanline - low_scanline);
+    col *= bright;       // -1..1 を low_scanline..high_scanline に remap
+
+    // flyback 帰線の光帯：1 本のソフトな帯がゆっくり下降
+    float bar_pos = frac(_Time * speed_flyback);
+    float yline = duv.y + (duv.x - 0.5) * tilt_flyback;  // 横位置に応じて傾ける
+    float d = abs(yline - bar_pos);
+    d = min(d, 1.0 - d);                              // 巡回距離、跳びを防ぐ
+    float bar = smoothstep(width_flyback, 0.0, d);
+    col += bar * intensity_flyback;
+
+    // スノーノイズ：不規則なバースト状の粒子（glitch）
+    float blk = floor(_Time * speed_snow);
+    float active = step(1.0 - burst_snow, hash21(float2(blk, 91.7)));
+    float burst_amp = active * (0.5 + 0.5 * hash21(float2(blk, 13.1)));  // バーストごとに強度がランダム
+
+    float2 cell = floor(duv / _ScreenPixelSize / size_snow);
+    float n = hash21(cell + blk);
+    float grain = step(1.0 - density_snow, n);
+
+    float snow = grain * burst_amp;
+
+    // 動的ドメインワープ fBm マスク：粒子の一部を不規則に隠し、時間とともに揺れる
+    float2 mp = duv * scale_mask;
+    float mt = _Time * flow_mask;
+    float2 q = float2(fbm(mp + float2(0.0, mt)),
+                      fbm(mp + float2(5.2, 1.3) - mt));
+    float mfield = fbm(mp + warp_mask * q);
+    float thr = coverage_mask + timevar_mask * sin(_Time * varspeed_mask);
+    float mask = smoothstep(thr - 0.15, thr + 0.15, mfield);   // 1=粒子を表示、0=隠す
+    snow *= mask;
+
+    // スノーをビネットの下に沈める：ビネットが強いほど粒子を暗くする
+    snow *= 1.0 - clamp(vmask * intensity_vignette, 0.0, 1.0);
+
+    col += snow * strength_snow;
+
+    return float4(col, 1.0);
+}
